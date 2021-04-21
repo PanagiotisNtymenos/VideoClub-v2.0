@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using VideoClub.Controllers;
 using VideoClub.Web.Models;
 
 namespace VideoClub.Web.Controllers

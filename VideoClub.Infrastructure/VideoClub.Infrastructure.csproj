@@ -58,10 +58,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\VideoClubDbContext.cs" />
+    <Compile Include="Migrations\202104200933252_init.cs" />
+    <Compile Include="Migrations\202104200933252_init.designer.cs">
+      <DependentUpon>202104200933252_init.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202104200933252_init.resx">
+      <DependentUpon>202104200933252_init.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />

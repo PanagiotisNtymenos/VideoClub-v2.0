@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using VideoClub.Core.Enumerations;
 
 namespace VideoClub.Web.Models
 {
@@ -55,7 +56,7 @@ namespace VideoClub.Web.Models
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Συνθηματικό")]
         public string Password { get; set; }
 
         [Display(Name = "Remember me?")]
@@ -65,19 +66,30 @@ namespace VideoClub.Web.Models
     public class RegisterViewModel
     {
         [Required]
+        [Display(Name = "Όνομα")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Επώνυμο")]
+        public string LastName { get; set; }
+
+        [Display(Name = "Αγαπημένο Είδος")]
+        public List<Genres> Genres { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "Το {0} πρέπει να περιέχει τουλάχιστον {2} χαρακτήρες.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Συνθηματικό")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Display(Name = "Επαλήθευση Συνθηματικού")]
+        [Compare("Password", ErrorMessage = "Τα συνθηματικά δεν ταυτίζονται.")]
         public string ConfirmPassword { get; set; }
     }
 

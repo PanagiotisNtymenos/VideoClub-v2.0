@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -6,23 +8,30 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using VideoClub.Core.Entities;
+using VideoClub.Core.Enumerations;
+using VideoClub.Infrastructure.Data;
+using VideoClub.Web;
 using VideoClub.Web.Models;
 
-namespace VideoClub.Web.Controllers
+namespace VideoClub.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private readonly VideoClubDbContext _context;
 
         public AccountController()
         {
+            _context = new VideoClubDbContext();
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -34,9 +43,9 @@ namespace VideoClub.Web.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -53,7 +62,7 @@ namespace VideoClub.Web.Controllers
         }
 
         //
-        // GET: /Account/Login
+        // GET: /account/login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
@@ -61,38 +70,49 @@ namespace VideoClub.Web.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/Login
+
+        // POST: /account/login
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
+            var user = UserManager.FindByEmail(model.Email);
+            if (user != null)
             {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
+                // This doesn't count login failures towards account lockout
+                // To enable password failures to trigger account lockout, change to shouldLockout: true
+                var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
+                switch (result)
+                {
+                    case SignInStatus.Success:
+                        return RedirectToLocal(returnUrl);
+                    case SignInStatus.LockedOut:
+                        return View("Lockout");
+                    case SignInStatus.RequiresVerification:
+                        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    case SignInStatus.Failure:
+                    default:
+                        ModelState.AddModelError("", "Λάθος στοιχεία!");
+                        return View(model);
+                }
+
+            }
+            else
+            {
+                ModelState.AddModelError("", "Δεν υπάρχει χρήστης με αυτά τα στοιχεία!");
+                return View(model);
             }
         }
 
         //
-        // GET: /Account/VerifyCode
+        // GET: /account/verifycode
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
@@ -105,7 +125,7 @@ namespace VideoClub.Web.Controllers
         }
 
         //
-        // POST: /Account/VerifyCode
+        // POST: /account/verifycode
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -120,7 +140,7 @@ namespace VideoClub.Web.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -135,35 +155,66 @@ namespace VideoClub.Web.Controllers
         }
 
         //
-        // GET: /Account/Register
+        // GET: /account/register
         [AllowAnonymous]
         public ActionResult Register()
         {
+            ViewBag.Genres = new MultiSelectList(Enum.GetValues(typeof(Genres)));
             return View();
         }
 
         //
-        // POST: /Account/Register
+        // POST: /account/register
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new User
+                {
+                    UserName = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
+
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    // add CUST role to new user
+                    var UserManager = new UserManager<User>(new UserStore<User>(_context));
+                    var userRoleResult = await UserManager.AddToRoleAsync(user.Id, "CUST");
+
+                    if (model.Genres != null)
+                    {
+                        foreach (Genres genre in model.Genres)
+                        {
+                            //    Debug.WriteLine((int)Enum.Parse(typeof(Genres), genre.ToString()));
+                            UserGenre ug = new UserGenre
+                            {
+                                UserId = user.Id,
+                                Genre = (int)Enum.Parse(typeof(Genres), genre.ToString())
+                            };
+
+                            _context.UserGenres.Add(ug);
+
+                        }
+                        _context.SaveChanges();
+                    }
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("index", "movies");
                 }
                 AddErrors(result);
             }
@@ -173,7 +224,7 @@ namespace VideoClub.Web.Controllers
         }
 
         //
-        // GET: /Account/ConfirmEmail
+        // GET: /account/confirmEmail
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
@@ -186,7 +237,7 @@ namespace VideoClub.Web.Controllers
         }
 
         //
-        // GET: /Account/ForgotPassword
+        // GET: /account/forgotPassword
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
@@ -252,12 +303,12 @@ namespace VideoClub.Web.Controllers
             if (user == null)
             {
                 // Don't reveal that the user does not exist
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+                return RedirectToAction("ResetPasswordConfirmation", "account");
             }
             var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+                return RedirectToAction("ResetPasswordConfirmation", "account");
             }
             AddErrors(result);
             return View();
@@ -279,7 +330,7 @@ namespace VideoClub.Web.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "account", new { ReturnUrl = returnUrl }));
         }
 
         //
@@ -356,7 +407,7 @@ namespace VideoClub.Web.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Manage");
+                return RedirectToAction("index", "manage");
             }
 
             if (ModelState.IsValid)
@@ -367,7 +418,7 @@ namespace VideoClub.Web.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new User { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -392,7 +443,7 @@ namespace VideoClub.Web.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("index", "movies");
         }
 
         //
@@ -449,7 +500,7 @@ namespace VideoClub.Web.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("index", "movies");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult

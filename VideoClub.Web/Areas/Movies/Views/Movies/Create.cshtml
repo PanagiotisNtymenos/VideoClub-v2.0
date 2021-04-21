@@ -1,0 +1,41 @@
+﻿@model VideoClub.Web.Areas.Movies.Models.MovieBindingModel
+@{
+    ViewBag.Title = "Ταινία";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("create", "movies", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <fieldset class="form-group">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group row-cols-4">
+                <label class="control-label">Τίτλος</label>
+                @Html.TextBoxFor(m => m.Movie.Title, null, new { id = "movieTitle", @class = "form-control" })
+            </div>
+            <div class="form-group row-cols-4">
+                <label class="control-label">Είδος</label>
+                @Html.ListBoxFor(m => m.Genres, (MultiSelectList)ViewBag.Genres, new { id = "genresDropDown", @class = "form-control", multiple = "true" })
+            </div>
+            <div class="form-group row-cols-4">
+                <label class="control-label">Κόπιες</label>
+                @Html.TextBoxFor(m => m.copiesNumber, null, new { id = "copies", @class = "form-control", @type = "number", min = "1" })
+            </div>
+            <div class="form-group">
+                <label for="notes">Περιγραφή</label>
+                @Html.TextAreaFor(d => d.Movie.Summary, new { id = "summary", @class = "form-control", rows = "3" })
+            </div>
+        </fieldset>
+        <div class="form-group">
+            <div class="col-md-offset-2">
+                <input type="submit" value="Προσθήκη" class="btn btn-secondary" />
+            </div>
+        </div>
+    </fieldset>
+}
+
+
+

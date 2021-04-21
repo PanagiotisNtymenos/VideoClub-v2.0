@@ -1,37 +1,54 @@
 ﻿@model VideoClub.Web.Models.RegisterViewModel
 @{
-    ViewBag.Title = "Register";
+    ViewBag.Title = "Εγγραφή";
 }
 
-<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Title.</h3>
 
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("register", "account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-    <h4>Create a new account.</h4>
     <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
+    <div class="form-group row-cols-4">
+        @Html.LabelFor(m => m.FirstName, new { @class = "control-label" })
+        <div>
+            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group row-cols-4">
+        @Html.LabelFor(m => m.LastName, new { @class = "control-label" })
+        <div>
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group row-cols-4">
+        @Html.LabelFor(m => m.Genres, new { @class = "control-label" })
+        <div>
+            @Html.ListBoxFor(m => m.Genres, ViewBag.Genres as MultiSelectList, new { id = "genresDropDown", @class = "form-control", multiple = "true" })
+        </div>
+    </div>
+    <div class="form-group row-cols-4">
+        @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+        <div>
             @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
         </div>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
+    <div class="form-group row-cols-4">
+        @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+        <div>
             @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
         </div>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
+    <div class="form-group row-cols-4">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label" })
+        <div>
             @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
         </div>
     </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
+    <div class="form-group row-cols-4">
+        <div class="col-md-offset-2">
+            <input type="submit" class="btn btn-secondary" value="Εγγραφή" />
         </div>
     </div>
 }

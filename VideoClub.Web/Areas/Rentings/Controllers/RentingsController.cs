@@ -1,0 +1,245 @@
+﻿using PagedList;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using VideoClub.Core.Entities;
+using VideoClub.Core.Interfaces;
+using VideoClub.Common.Services;
+using System.Diagnostics;
+using VideoClub.Web.Areas.Rentings.Models;
+
+namespace VideoClub.Web.Areas.Rentings.Controllers
+{
+    [Authorize(Roles = "ADMIN")]
+    public class RentingsController : Controller
+    {
+        private readonly IRentingService _rentingService;
+        private readonly ICopyService _copyService;
+        private readonly IUserService _userService;
+        private readonly IMovieService _movieService;
+
+        public RentingsController(IRentingService rentingService, ICopyService copyService, IUserService userService, IMovieService movieService)
+        {
+            _rentingService = rentingService;
+            _copyService = copyService;
+            _userService = userService;
+            _movieService = movieService;
+        }
+
+        public async Task<ActionResult> Index(int? page)
+        {
+            try
+            {
+                // rules of paging
+                int PageSize = 3;
+                int PageNumber = (page ?? 1);
+
+                List<Renting> allRentings = await _rentingService.GetAllActiveRentings();
+
+                return View(allRentings.ToPagedList(PageNumber, PageSize));
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return View("Error");
+            }
+        }
+
+        // GET: /rentings/create
+        public async Task<ActionResult> Create(string customer, int? movieId)
+        {
+            try
+            {
+                int copyId = 0;
+                string username = null;
+                try
+                {
+                    Copy copy = await _copyService.GetAvailableCopyById((movieId ?? 0));
+                    if (copy != null) copyId = copy.Id;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    //return View("Error");
+                }
+
+                try
+                {
+                    User user = _userService.GetUserByUserName(customer);
+                    if (user != null) username = user.UserName;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    //return View("Error");
+                }
+
+                RentingBindModel rentingBindingModel = new RentingBindModel(username, copyId);
+
+                return View(rentingBindingModel);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return View("Error");
+            }
+        }
+
+        // POST: /rentings/create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(RentingBindModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Συμπληρώστε όλα τα απαραίτητα πεδία!");
+                model.Username = null;
+                model.Title = null;
+                model.CopyId = 0;
+                return View(model);
+            }
+            try
+            {
+                User user;
+                Copy copy;
+                try
+                {
+                    user = _userService.GetUserByUserName(model.Username);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    ModelState.AddModelError("", "Δεν υπάρχει αυτός ο πελάτης!");
+                    model.Username = null;
+                    return View(model);
+                }
+
+                try
+                {
+                    copy = await _copyService.GetAvailableCopyById(model.CopyId);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    ModelState.AddModelError("", "Δεν υπάρχει αυτή η ταινία!");
+                    model.Title = null;
+                    model.CopyId = 0;
+                    return View(model);
+                }
+
+                Renting renting = new Renting(model.RentingDate, DateTime.Now, model.ScheduledReturnDate, true, user, copy, model.RentingNotes, null);
+
+                _rentingService.AddRenting(renting, copy);
+
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                ModelState.AddModelError("", "Λάθος στοιχεία!");
+                model.Username = null;
+                model.Title = null;
+                model.CopyId = 0;
+                return View(model);
+            }
+
+            return RedirectToAction("", "");
+        }
+
+
+        // GET: /rentings/delete
+        public async Task<ActionResult> Delete(int rentingId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Error");
+            }
+
+            try
+            {
+
+                Renting renting = await _rentingService.GetRentingById(rentingId);
+
+                if (renting.IsActive)
+                    return View(renting);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return View("Error");
+            }
+            return View("Error");
+        }
+
+        // POST: /rentings/delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Delete(Renting model, string returnUrl)
+        {
+            try
+            {
+                Renting renting;
+                try
+                {
+                    renting = await _rentingService.GetRentingById(model.Id);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    ModelState.AddModelError("", "Δεν υπάρχει αυτή η κράτηση!");
+                    return View(model);
+                }
+
+                renting.IsActive = false;
+                renting.ReturnNotes = model.ReturnNotes;
+                renting.ReturnDate = DateTime.Now;
+                renting.Copy.IsAvailable = true;
+
+                _rentingService.DeleteRenting(renting);
+
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                ModelState.AddModelError("", "Λάθος στοιχεία!");
+                return View(model);
+            }
+
+            return RedirectToAction("", "");
+        }
+
+        public async Task<JsonResult> MoviesAutoComplete(string term)
+        {
+            List<Movie> movies = await _movieService.GetAvailableMoviesByQuery(term);
+
+            if (movies.Count() > 0)
+            {
+                var moviesAndIds = new Object[movies.Count()];
+
+                int i = 0;
+                foreach (Movie movie in movies)
+                {
+                    moviesAndIds[i] = new
+                    {
+                        label = movie.Title,
+                        movieId = movie.Id
+                    };
+                    i++;
+                }
+                return Json(moviesAndIds, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public async Task<JsonResult> UsersAutoComplete(string term)
+        {
+            List<string> users = await _userService.GetUserNameByQuery(term);
+
+            return Json(users, JsonRequestBehavior.AllowGet);
+        }
+    }
+}

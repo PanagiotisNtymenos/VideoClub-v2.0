@@ -1,0 +1,99 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<VideoClub.Web.Areas.Movies.Models.MovieViewModel>
+@{
+    ViewBag.Title = "Ταινίες";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("", "movies", FormMethod.Get, new { @class = "form-inline my-2 my-lg-0" }))
+{
+    <p style="width:100%">
+        @Html.TextBox("q", ViewBag.currentFilter as string, new { @class = "form-control mr-sm-2" })
+        @Html.DropDownList("genre", ViewBag.Genres as SelectList, "--", new { @class = "form-control mr-sm-2" })
+        <input class="btn btn-secondary" type="submit" value="Search" />
+        @if (User.IsInRole("ADMIN"))
+        {
+            <button style="float:right" type="button" class="btn btn-success mr-sm-2" onclick="location.href='@Url.Action("create", "movies")'">+</button>
+        }
+    </p>
+
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col" style="white-space:nowrap">ID</th>
+            <th scope="col" style="white-space:nowrap">Τίτλος</th>
+            <th scope="col" style="white-space:nowrap">Περιγραφή</th>
+            <th scope="col" style="white-space:nowrap">Είδος</th>
+            <th scope="col" style="white-space:nowrap">Διαθεσιμότητα</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="table-default">
+                <td>
+                    @Html.DisplayFor(m => item.Movie.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.Movie.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.Movie.Summary)
+                </td>
+                <td>
+                    @foreach (var genre in item.Genres)
+                    {
+                        if (item.Genres.Last() != genre)
+                        {
+                            <span>@genre</span><span>,</span>
+                        }
+                        else
+                        {
+                            <span>@genre</span>
+                        }
+                    }
+                </td>
+                <td style="text-align: center;">
+                    @if (item.Availabilty == 0)
+                    {
+                        <div style="color:red">
+                            @Html.DisplayFor(m => item.Availabilty)
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="color:green">
+                            @Html.DisplayFor(m => item.Availabilty)
+                        </div>
+                    }
+                </td>
+                <td>
+                    @if (User.IsInRole("ADMIN"))
+                    {
+                        if (item.Availabilty == 0)
+                        {
+                            <button type="button" disabled class="btn btn-dark">></button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-dark" onclick="location.href='@Url.Action("create", "rentings", new { movieId = item.Movie.Id })'">></button>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<br />
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("", new { page, currentQuery = ViewBag.currentFilter, genre = ViewBag.currentGenre }))
+

@@ -1,0 +1,82 @@
+﻿@model VideoClub.Models.Renting
+@{
+    ViewBag.Title = "Επιστροφή";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("delete", "rentings", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <fieldset>
+        <fieldset class="form-group">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="form-group col">
+                    <label class="control-label" for="userName">Username</label>
+                    @Html.TextBoxFor(r => r.User.UserName, Model.User.UserName, new { id = "userName", @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col">
+                    <label class="control-label" for="name">Όνομα</label>
+                    @Html.TextBoxFor(r => r.User.FirstName, Model.User.FirstName, new { id = "name", @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col">
+                    <label class="control-label" for="surname">Επώνυμο</label>
+                    @Html.TextBoxFor(r => r.User.LastName, Model.User.LastName, new { id = "surname", @class = "form-control", @readonly = "readonly" })
+                </div>              
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <label class="control-label">Ταινία</label>
+                    @Html.TextBoxFor(r => r.Copy.Movie.Title, Model.Copy.Movie.Title, new { id = "movie", @class = "form-control", @readonly = "readonly" })
+                </div>               
+                <div class="form-group col">
+                    <label class="control-label">ID Κόπιας</label>
+                    @Html.TextBoxFor(r => r.Copy.Id, Model.Copy.Id.ToString(), new { id = "copyId", @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col">
+                    <label class="control-label">ID Κράτησης</label>
+                    @Html.TextBoxFor(r => r.Id, Model.Id.ToString(), new { id = "Id", @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col">
+                    <label class="control-label">Ημερομηνία Κράτησης</label>
+                    @Html.TextBoxFor(d => d.RentingDate, Model.RentingDate.ToString("dd/MM/yyyy"), new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col">
+                    <label class="control-label">Ημερομηνία Προγ. Επιστροφής</label>
+                    @Html.TextBoxFor(d => d.ReturnDate, Model.RentingDate.AddDays(7).ToString("dd/MM/yyyy"), new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col">
+                    <label class="control-label">Ημερομηνία Σήμερα</label>
+                    @if (DateTime.Compare(Model.ReturnDate.Date, DateTime.Now.Date) < 0)
+                    {
+                        @Html.TextBox("Date", DateTime.Now.ToString("d/MM/yyyy"), new { @class = "form-control", @readonly = "readonly", style = "color:red" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(d => d.ReturnDate, DateTime.Now.ToString("d/MM/yyyy"), new { @class = "form-control", @readonly = "readonly", style = "color:green" })
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="rentingNotes">Σχόλια Κράτησης</label>
+                @Html.TextAreaFor(d => d.RentingNotes, new { id = "rentingNotes", @class = "form-control", rows = "3", @readonly = "readonly", value = @Model.RentingNotes })
+            </div>
+            <div class="form-group">
+                <label for="returnNotes">Σχόλια Επιστροφής</label>
+                @Html.TextAreaFor(d => d.ReturnNotes, new { id = "returnNotes", @class = "form-control", rows = "3" })
+            </div>
+
+        </fieldset>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Επιστροφή" class="btn btn-secondary" />
+            </div>
+        </div>
+    </fieldset>
+}
+

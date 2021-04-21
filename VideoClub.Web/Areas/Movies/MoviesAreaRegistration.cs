@@ -2,22 +2,22 @@
 
 namespace VideoClub.Web.Areas.Movies
 {
-    public class MoviesAreaRegistration : AreaRegistration 
+    public class MoviesAreaRegistration : AreaRegistration
     {
-        public override string AreaName 
+        public override string AreaName
         {
-            get 
+            get
             {
                 return "Movies";
             }
         }
 
-        public override void RegisterArea(AreaRegistrationContext context) 
+        public override void RegisterArea(AreaRegistrationContext context)
         {
             context.MapRoute(
                 "Movies_default",
-                "{controller}/{action}/{id}",
-                new { action = "Index", id = UrlParameter.Optional }
+                "movies/{controller}/{action}/{id}",
+                new { controller = "movies", action = "index", id = UrlParameter.Optional }
             );
         }
     }
