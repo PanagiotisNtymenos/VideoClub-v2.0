@@ -52,12 +52,12 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
         {
             try
             {
-                int copyId = 0;
+                string title = null;
                 string username = null;
                 try
                 {
                     Copy copy = await _copyService.GetAvailableCopyById((movieId ?? 0));
-                    if (copy != null) copyId = copy.Id;
+                    if (copy != null) title = copy.Movie.Title;
                 }
                 catch (Exception e)
                 {
@@ -76,9 +76,9 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                     //return View("Error");
                 }
 
-                RentingBindModel rentingBindingModel = new RentingBindModel(username, copyId);
+                RentingBindModel rentingBindModel = new RentingBindModel(username, title, (int)movieId);
 
-                return View(rentingBindingModel);
+                return View(rentingBindModel);
             }
             catch (Exception e)
             {
@@ -97,7 +97,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 ModelState.AddModelError("", "Συμπληρώστε όλα τα απαραίτητα πεδία!");
                 model.Username = null;
                 model.Title = null;
-                model.CopyId = 0;
+                model.MovieId = 0;
                 return View(model);
             }
             try
@@ -118,20 +118,20 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
 
                 try
                 {
-                    copy = await _copyService.GetAvailableCopyById(model.CopyId);
+                    copy = await _copyService.GetAvailableCopyById(model.MovieId);
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
                     ModelState.AddModelError("", "Δεν υπάρχει αυτή η ταινία!");
                     model.Title = null;
-                    model.CopyId = 0;
+                    model.MovieId = 0;
                     return View(model);
                 }
 
-                Renting renting = new Renting(model.RentingDate, DateTime.Now, model.ScheduledReturnDate, true, user, copy, model.RentingNotes, null);
+                Renting renting = new Renting(model.RentingDate, DateTime.Now, model.ScheduledReturnDate, user, copy, true, model.RentingNotes, null);
 
-                _rentingService.AddRenting(renting, copy);
+                await _rentingService.AddRenting(renting);
 
             }
             catch (Exception e)
@@ -140,11 +140,11 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 ModelState.AddModelError("", "Λάθος στοιχεία!");
                 model.Username = null;
                 model.Title = null;
-                model.CopyId = 0;
+                model.MovieId = 0;
                 return View(model);
             }
 
-            return RedirectToAction("", "");
+            return RedirectToAction("index", "movies");
         }
 
 

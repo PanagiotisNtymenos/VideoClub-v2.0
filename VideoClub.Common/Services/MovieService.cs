@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using VideoClub.Core.Entities;
+using VideoClub.Core.Enumerations;
 using VideoClub.Core.Interfaces;
 using VideoClub.Infrastructure.Data;
 
@@ -11,13 +13,20 @@ namespace VideoClub.Common.Services
     public class MovieService : IMovieService
     {
         private readonly VideoClubDbContext _context;
+        private readonly ICopyService _copyService;
 
-        public MovieService()
+        public MovieService(VideoClubDbContext context, ICopyService copyService)
         {
-            _context = new VideoClubDbContext();
+            _context = context;
+            _copyService = copyService;
         }
 
         // Get
+        public async Task<Movie> GetMovieById(int Id)
+        {
+            return await _context.Movies.Where(m => m.Id == Id).Include(m => m.Copies).Include(m => m.MovieGenres).FirstAsync();
+        }
+
         public async Task<List<Movie>> GetMoviesByQuery(string q)
         {
             return await _context.Movies.Where(m => m.Title.Contains(q)).Include(m => m.Copies).Include(m => m.MovieGenres).ToListAsync();
@@ -34,10 +43,20 @@ namespace VideoClub.Common.Services
         }
 
         // Add
-        public void AddMovie(Movie movie)
+        public async Task AddMovie(Movie movie, List<Genres> genres, int copies)
         {
+            foreach (Genres genre in genres)
+            {
+                movie.MovieGenres.Add(new MovieGenre(movie, (int)Enum.Parse(typeof(Genres), genre.ToString())));
+            }
+
+            for (int i = 1; i <= copies; i++)
+            {
+                movie.Copies.Add(new Copy(movie));
+            }
+
             _context.Movies.Add(movie);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
     }

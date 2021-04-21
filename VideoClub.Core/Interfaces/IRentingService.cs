@@ -14,9 +14,9 @@ namespace VideoClub.Core.Interfaces
         Task<Renting> GetRentingById(int rentingId);
 
         // Add
-        void AddRenting(Renting renting, Copy copy);
+        Task AddRenting(Renting renting);
 
         // Delete
-        void DeleteRenting(Renting renting);
+        Task DeleteRenting(Renting renting);
     }
 }

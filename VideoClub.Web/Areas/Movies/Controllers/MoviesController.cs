@@ -21,14 +21,12 @@ namespace VideoClub.Web.Areas.Movies.Controllers
     public class MoviesController : Controller
     {
         private IMapper Mapper => MapperInit.Init();
-        private IMovieService _movieService;
-        private IMovieGenreService _movieGenreService;
-        private ICopyService _copyService;
+        private readonly IMovieService _movieService;
+        private readonly ICopyService _copyService;
 
-        public MoviesController(IMovieService movieService, IMovieGenreService movieGenreService, ICopyService copyService)
+        public MoviesController(IMovieService movieService, ICopyService copyService)
         {
             _movieService = movieService;
-            _movieGenreService = movieGenreService;
             _copyService = copyService;
         }
 
@@ -143,7 +141,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
         [HttpPost]
         [Authorize(Roles = "ADMIN")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(MovieBindModel model)
+        public async Task<ActionResult> Create(MovieBindModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -161,14 +159,10 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                     return View(model);
                 }
 
-                Movie movie = new Movie
-                {
-                    Title = model.Movie.Title,
-                    Summary = model.Movie.Summary
-                };
-                _movieService.AddMovie(movie);
-                _movieGenreService.AddGenreToMovie(model.Genres, movie);
-                _copyService.AddCopies(model.copiesNumber, movie);
+                Movie movie = new Movie(model.Title, model.Summary);
+
+                await _movieService.AddMovie(movie, model.Genres, model.copiesNumber);
+
             }
             catch (Exception e)
             {
@@ -178,7 +172,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                 return View(model);
             }
 
-            return RedirectToAction("", "");
+            return RedirectToAction("index", "movies");
         }
 
         public async Task<JsonResult> MoviesAutoComplete(string term)

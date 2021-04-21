@@ -8,9 +8,18 @@ namespace VideoClub.Core.Entities
 {
     public class Movie
     {
+        public Movie(string title, string summary)
+        {
+            Title = title;
+            Summary = summary;
+            Copies = new List<Copy>();
+            MovieGenres = new List<MovieGenre>();
+        }
+
         public Movie()
         {
-
+            Copies = new List<Copy>();
+            MovieGenres = new List<MovieGenre>();
         }
 
         public int Id { get; set; }

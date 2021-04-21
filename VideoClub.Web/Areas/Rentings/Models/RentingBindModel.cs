@@ -14,7 +14,7 @@ namespace VideoClub.Web.Areas.Rentings.Models
         public string Title { get; set; }
 
         [Required]
-        public int CopyId { get; set; }
+        public int MovieId { get; set; }
 
         [Required]
         public string Username { get; set; }
@@ -29,10 +29,11 @@ namespace VideoClub.Web.Areas.Rentings.Models
 
         public string ReturnNotes { get; set; }
 
-        public RentingBindModel(string username, int copyId)
+        public RentingBindModel(string username,string title, int movieId)
         {
             this.Username = username;
-            this.CopyId = copyId;
+            this.Title = title;
+            this.MovieId = movieId;
         }
 
         public RentingBindModel() { }

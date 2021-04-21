@@ -15,6 +15,7 @@ namespace VideoClub.Core.Entities
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class User : IdentityUser
     {
+
         // add first name property to ASP.NET user 
         [Required]
         [StringLength(256)]

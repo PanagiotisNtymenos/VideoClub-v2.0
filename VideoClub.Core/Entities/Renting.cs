@@ -9,14 +9,14 @@ namespace VideoClub.Core.Entities
 {
     public class Renting
     {
-        public Renting(DateTime rentingDate, DateTime scheduledReturnDate, DateTime returnDate, bool isActive, User user, Copy copy, string rentingNotes, string returnNotes)
+        public Renting(DateTime rentingDate, DateTime scheduledReturnDate, DateTime returnDate, User user, Copy copy, bool isActive, string rentingNotes, string returnNotes)
         {
             RentingDate = rentingDate;
             ScheduledReturnDate = scheduledReturnDate;
             ReturnDate = returnDate;
-            IsActive = isActive;
             User = user;
             Copy = copy;
+            IsActive = isActive;
             RentingNotes = rentingNotes;
             ReturnNotes = returnNotes;
         }

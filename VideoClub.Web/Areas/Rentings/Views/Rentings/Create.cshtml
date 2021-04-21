@@ -1,4 +1,4 @@
-﻿@model VideoClub.Web.Areas.Rentings.Models.RentingBindingModel
+﻿@model VideoClub.Web.Areas.Rentings.Models.RentingBindModel
 @{
     ViewBag.Title = "Κράτηση";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -26,11 +26,11 @@
                     </div>
                     <div class="form-group col">
                         <label class="control-label">ID Ταινίας</label>
-                        @Html.TextBoxFor(r => r.CopyId, null, new { id = "movieId", @class = "form-control", @readonly = "readonly" })
+                        @Html.TextBoxFor(r => r.MovieId, null, new { id = "movieId", @class = "form-control", @readonly = "readonly" })
                     </div>
                 </div>
             }
-            else if (Model.CopyId != 0)
+            else if (Model.MovieId != 0)
             {
                 <div class="form-group">
                     <label class="control-label">Πελάτης</label>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="form-group col">
                         <label class="control-label">ID Ταινίας</label>
-                        @Html.TextBoxFor(r => r.CopyId, Model.CopyId.ToString(), new { id = "movieId", @class = "form-control", @readonly = "readonly" })
+                        @Html.TextBoxFor(r => r.MovieId, Model.MovieId.ToString(), new { id = "movieId", @class = "form-control", @readonly = "readonly" })
                     </div>
                 </div>
             }
@@ -60,7 +60,7 @@
                     </div>
                     <div class="form-group col">
                         <label class="control-label">ID Ταινίας</label>
-                        @Html.TextBoxFor(r => r.CopyId, null, new { id = "movieId", @class = "form-control", @readonly = "readonly" })
+                        @Html.TextBoxFor(r => r.MovieId, null, new { id = "movieId", @class = "form-control", @readonly = "readonly" })
                     </div>
                 </div>
             }

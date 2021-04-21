@@ -10,13 +10,20 @@ namespace VideoClub.Core.Entities
 {
     public class MovieGenre
     {
+        public MovieGenre(Movie movie, int genre)
+        {
+            Movie = movie;
+            Genre = genre;
+        }
+        public MovieGenre() { }
+
         [Key]
         [Column(Order = 0)]
         public int MovieId { get; set; }
 
         [Key]
         [Column(Order = 1)]
-        public virtual int Genre { get; set; }
+        public int Genre { get; set; }
 
         public virtual Movie Movie { get; set; }
 

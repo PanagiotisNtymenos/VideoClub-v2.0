@@ -1,4 +1,4 @@
-﻿@model VideoClub.Web.Areas.Movies.Models.MovieBindingModel
+﻿@model VideoClub.Web.Areas.Movies.Models.MovieBindModel
 @{
     ViewBag.Title = "Ταινία";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,7 +6,7 @@
 
 <h2>@ViewBag.Title.</h2>
 
-@using (Html.BeginForm("create", "movies", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("create", "movies", new { Area = "movies" }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
     <fieldset>
@@ -14,7 +14,7 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group row-cols-4">
                 <label class="control-label">Τίτλος</label>
-                @Html.TextBoxFor(m => m.Movie.Title, null, new { id = "movieTitle", @class = "form-control" })
+                @Html.TextBoxFor(m => m.Title, null, new { id = "movieTitle", @class = "form-control" })
             </div>
             <div class="form-group row-cols-4">
                 <label class="control-label">Είδος</label>
@@ -26,7 +26,7 @@
             </div>
             <div class="form-group">
                 <label for="notes">Περιγραφή</label>
-                @Html.TextAreaFor(d => d.Movie.Summary, new { id = "summary", @class = "form-control", rows = "3" })
+                @Html.TextAreaFor(d => d.Summary, new { id = "summary", @class = "form-control", rows = "3" })
             </div>
         </fieldset>
         <div class="form-group">

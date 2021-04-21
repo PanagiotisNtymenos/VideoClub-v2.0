@@ -39,7 +39,7 @@ namespace VideoClub.Web.App_Start
             builder.RegisterType<MovieService>().As<IMovieService>().InstancePerRequest();
             builder.RegisterType<RentingService>().As<IRentingService>().InstancePerRequest();
             builder.RegisterType<CopyService>().As<ICopyService>().InstancePerRequest();
-            builder.RegisterType<MovieGenreService>().As<IMovieGenreService>().InstancePerRequest();
+            builder.RegisterType<UserService>().As<IUserService>().InstancePerRequest();
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));

@@ -65,7 +65,6 @@
     <Compile Include="Entities\UserGenre.cs" />
     <Compile Include="Enumerations\Genres.cs" />
     <Compile Include="Interfaces\ICopyService.cs" />
-    <Compile Include="Interfaces\IMovieGenreService.cs" />
     <Compile Include="Interfaces\IMovieService.cs" />
     <Compile Include="Interfaces\IRentingService.cs" />
     <Compile Include="Interfaces\IUserService.cs" />

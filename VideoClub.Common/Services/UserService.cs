@@ -15,9 +15,9 @@ namespace VideoClub.Common.Services
     {
         private readonly VideoClubDbContext _context;
 
-        public UserService()
+        public UserService(VideoClubDbContext context)
         {
-            _context = new VideoClubDbContext();
+            _context = context;
         }
 
         public User GetUserByUserName(string username)

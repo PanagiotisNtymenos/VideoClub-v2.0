@@ -14,9 +14,9 @@ namespace VideoClub.Common.Services
     {
         private readonly VideoClubDbContext _context;
 
-        public RentingService()
+        public RentingService(VideoClubDbContext context)
         {
-            _context = new VideoClubDbContext();
+            _context = context;
         }
 
         // Get
@@ -32,20 +32,19 @@ namespace VideoClub.Common.Services
 
 
         // Add
-        public void AddRenting(Renting renting, Copy copy)
+        public async Task AddRenting(Renting renting)
         {
             _context.Rentings.Add(renting);
+            _context.Copies.Attach(renting.Copy);
+            renting.Copy.IsAvailable = false;
+            _context.Entry(renting.Copy).Property(c => c.IsAvailable).IsModified = true;
 
-            _context.Copies.Attach(copy);
-            copy.IsAvailable = false;
-            _context.Entry(copy).Property(c => c.IsAvailable).IsModified = true;
-
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
-        
+
         // Delete
-        public void DeleteRenting(Renting renting)
+        public async Task DeleteRenting(Renting renting)
         {
             _context.Rentings.Attach(renting);
             _context.Entry(renting).Property(r => r.IsActive).IsModified = true;
@@ -55,7 +54,7 @@ namespace VideoClub.Common.Services
             _context.Copies.Attach(renting.Copy);
             _context.Entry(renting.Copy).Property(c => c.IsAvailable).IsModified = true;
 
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }

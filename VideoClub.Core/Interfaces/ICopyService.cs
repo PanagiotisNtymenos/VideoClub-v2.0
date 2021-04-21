@@ -13,7 +13,5 @@ namespace VideoClub.Core.Interfaces
         Task<List<Copy>> GetCopiesByTitleQuery(string q);
         Task<Copy> GetAvailableCopyById(int movieId);
 
-        // Add
-        void AddCopies(int copies, Movie movie);
     }
 }

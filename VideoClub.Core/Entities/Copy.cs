@@ -8,6 +8,14 @@ namespace VideoClub.Core.Entities
 {
     public class Copy
     {
+        public Copy(Movie movie)
+        {
+            Movie = movie;
+            IsAvailable = true;
+        }
+
+        public Copy() { }
+
         public int Id { get; set; }
 
         public virtual Movie Movie { get; set; }

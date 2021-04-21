@@ -114,7 +114,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CopyService.cs" />
-    <Compile Include="Services\MovieGenreService.cs" />
     <Compile Include="Services\MovieService.cs" />
     <Compile Include="Services\RentingService.cs" />
     <Compile Include="Services\UserService.cs" />

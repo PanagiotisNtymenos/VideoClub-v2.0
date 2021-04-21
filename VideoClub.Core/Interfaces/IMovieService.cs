@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using VideoClub.Core.Entities;
+using VideoClub.Core.Enumerations;
 
 namespace VideoClub.Core.Interfaces
 {
@@ -12,6 +13,6 @@ namespace VideoClub.Core.Interfaces
         Task<List<Movie>> GetAllMovies();
 
         // Add
-        void AddMovie(Movie movie);
+        Task AddMovie(Movie movie, List<Genres> genres, int copiesNumber);
     }
 }
