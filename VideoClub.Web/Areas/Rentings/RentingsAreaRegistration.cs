@@ -17,7 +17,8 @@ namespace VideoClub.Web.Areas.Rentings
             context.MapRoute(
                 "Rentings_default",
                 "rentings/{controller}/{action}/{id}",
-                new { area = "rentings", controller = "rentings", action = "index", id = UrlParameter.Optional }
+                new { action = "index", id = UrlParameter.Optional },
+                new[] { "VideoClub.Web.Areas.Rentings.Controllers" }
             );
         }
     }

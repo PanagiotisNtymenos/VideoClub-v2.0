@@ -37,7 +37,7 @@
                     @Html.DisplayFor(m => item.Copy.Id)
                 </td>
                 <td>
-                    @Html.ActionLink(item.User.UserName, "rentings", "customers", new { Area = "customers" }, new { customer = item.User.UserName })
+                    @Html.ActionLink(item.User.UserName, "rentings", "customers", new { area = "customers", customer = item.User.UserName }, null)
                 </td>
                 <td>
                     @if (DateTime.Compare(item.ReturnDate, DateTime.Now) < 0)

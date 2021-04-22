@@ -17,8 +17,9 @@ namespace VideoClub.Web.Areas.Customers
             context.MapRoute(
                 "Customers_default",
                 "customers/{controller}/{action}/{id}",
-                new { area = "customers", controller = "customers", action = "index", id = UrlParameter.Optional }
+                new { action = "index", id = UrlParameter.Optional }
             );
+
         }
     }
 }

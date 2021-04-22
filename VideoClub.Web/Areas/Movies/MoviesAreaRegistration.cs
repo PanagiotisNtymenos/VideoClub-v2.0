@@ -14,11 +14,13 @@ namespace VideoClub.Web.Areas.Movies
 
         public override void RegisterArea(AreaRegistrationContext context)
         {
+
             context.MapRoute(
                 "Movies_default",
                 "movies/{controller}/{action}/{id}",
-                new { area = "movies", controller = "movies", action = "index", id = UrlParameter.Optional }
+                new { action = "index", id = UrlParameter.Optional }
             );
+
         }
     }
 }

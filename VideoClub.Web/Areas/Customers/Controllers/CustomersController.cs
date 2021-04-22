@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using VideoClub.Core.Entities;
 using VideoClub.Core.Interfaces;
 
-namespace VideoClub.Controllers
+namespace VideoClub.Web.Areas.Customers.Controllers
 {
     [Authorize(Roles = "ADMIN")]
     public class CustomersController : Controller

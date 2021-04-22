@@ -18,7 +18,7 @@
         <input class="btn btn-secondary" type="submit" value="Search" />
         @if (User.IsInRole("ADMIN"))
         {
-            <button style="float:right" type="button" class="btn btn-success mr-sm-2" onclick="location.href='@Url.Action("create", "movies", new { Area = "movies" })'">+</button>
+            <button style="float:right" type="button" class="btn btn-success mr-sm-2" onclick="location.href='@Url.Action("create", "movies", new { area = "movies" }, null)'">+</button>
         }
     </p>
 
