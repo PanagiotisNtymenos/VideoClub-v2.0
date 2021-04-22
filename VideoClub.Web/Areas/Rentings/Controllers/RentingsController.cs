@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using VideoClub.Core.Entities;
 using VideoClub.Core.Interfaces;
-using VideoClub.Common.Services;
 using System.Diagnostics;
 using VideoClub.Web.Areas.Rentings.Models;
 
@@ -28,6 +27,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             _movieService = movieService;
         }
 
+        // GET: /rentings
         public async Task<ActionResult> Index(int? page)
         {
             try
@@ -56,8 +56,12 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 string username = null;
                 try
                 {
-                    Copy copy = await _copyService.GetAvailableCopyById((movieId ?? 0));
-                    if (copy != null) title = copy.Movie.Title;
+                    if (movieId != null)
+                    {
+                        Copy copy = await _copyService.GetAvailableCopyById((int)movieId);
+                        if (copy != null) title = copy.Movie.Title;
+                    }
+
                 }
                 catch (Exception e)
                 {
@@ -76,7 +80,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                     //return View("Error");
                 }
 
-                RentingBindModel rentingBindModel = new RentingBindModel(username, title, (int)movieId);
+                RentingBindModel rentingBindModel = new RentingBindModel(username, title, movieId);
 
                 return View(rentingBindModel);
             }
@@ -118,7 +122,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
 
                 try
                 {
-                    copy = await _copyService.GetAvailableCopyById(model.MovieId);
+                    copy = await _copyService.GetAvailableCopyById((int)model.MovieId);
                 }
                 catch (Exception e)
                 {
@@ -129,9 +133,9 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                     return View(model);
                 }
 
-                Renting renting = new Renting(model.RentingDate, DateTime.Now, model.ScheduledReturnDate, user, copy, true, model.RentingNotes, null);
+                Renting renting = new Renting(model.RentingNotes);
 
-                await _rentingService.AddRenting(renting);
+                await _rentingService.AddRenting(renting, user, copy);
 
             }
             catch (Exception e)
@@ -144,12 +148,12 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 return View(model);
             }
 
-            return RedirectToAction("index", "movies");
+            return RedirectToAction("index", "rentings");
         }
 
 
-        // GET: /rentings/delete
-        public async Task<ActionResult> Delete(int rentingId)
+        // GET: /rentings/return?returnId
+        public async Task<ActionResult> Return(int rentingId)
         {
             if (!ModelState.IsValid)
             {
@@ -172,10 +176,10 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             return View("Error");
         }
 
-        // POST: /rentings/delete
+        // POST: /rentings/return
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(Renting model, string returnUrl)
+        public async Task<ActionResult> Return(Renting model)
         {
             try
             {
@@ -196,7 +200,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 renting.ReturnDate = DateTime.Now;
                 renting.Copy.IsAvailable = true;
 
-                _rentingService.DeleteRenting(renting);
+                await _rentingService.ReturnRenting(renting);
 
             }
             catch (Exception e)
@@ -206,7 +210,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 return View(model);
             }
 
-            return RedirectToAction("", "");
+            return RedirectToAction("index", "rentings");
         }
 
         public async Task<JsonResult> MoviesAutoComplete(string term)

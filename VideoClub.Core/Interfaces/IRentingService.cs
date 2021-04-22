@@ -12,11 +12,12 @@ namespace VideoClub.Core.Interfaces
         // Get 
         Task<List<Renting>> GetAllActiveRentings();
         Task<Renting> GetRentingById(int rentingId);
+        Task<List<Renting>> GetUserRentings(string usernme);
 
         // Add
-        Task AddRenting(Renting renting);
+        Task AddRenting(Renting renting, User user, Copy copy);
 
-        // Delete
-        Task DeleteRenting(Renting renting);
+        // Edit
+        Task ReturnRenting(Renting renting);
     }
 }

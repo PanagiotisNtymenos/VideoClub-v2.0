@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNet.Identity
-
-@if (Request.IsAuthenticated && User.IsInRole("ADMIN"))
+﻿@if (Request.IsAuthenticated && User.IsInRole("ADMIN"))
 {
     <ul class="navbar-nav mr-auto">
         <li class="nav-item">@Html.ActionLink("Ταινίες", "index", "movies", new { Area = "movies" }, new { @class = "nav-link" })</li>

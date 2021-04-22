@@ -30,21 +30,30 @@ namespace VideoClub.Common.Services
             return await _context.Rentings.Where(r => r.Id == rentingId).Include(c => c.Copy).FirstAsync();
         }
 
+        public async Task<List<Renting>> GetUserRentings(string username)
+        {
+            return await _context.Rentings.Where(r => r.User.UserName == username).ToListAsync();
+        }
+
 
         // Add
-        public async Task AddRenting(Renting renting)
+        public async Task AddRenting(Renting renting, User user, Copy copy)
         {
-            _context.Rentings.Add(renting);
+            renting.User = _context.Users.Find(user.Id);
+            renting.Copy = _context.Copies.Find(copy.Id);
+
             _context.Copies.Attach(renting.Copy);
             renting.Copy.IsAvailable = false;
             _context.Entry(renting.Copy).Property(c => c.IsAvailable).IsModified = true;
+
+            _context.Rentings.Add(renting);
 
             await _context.SaveChangesAsync();
         }
 
 
-        // Delete
-        public async Task DeleteRenting(Renting renting)
+        // Edit
+        public async Task ReturnRenting(Renting renting)
         {
             _context.Rentings.Attach(renting);
             _context.Entry(renting).Property(r => r.IsActive).IsModified = true;

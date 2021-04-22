@@ -208,6 +208,8 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Areas\Customers\Controllers\CustomersController.cs" />
+    <Compile Include="Areas\Customers\CustomersAreaRegistration.cs" />
     <Compile Include="Areas\Movies\Controllers\MoviesController.cs" />
     <Compile Include="Areas\Movies\Models\MovieBindModel.cs" />
     <Compile Include="Areas\Movies\Models\MovieViewModel.cs" />
@@ -277,8 +279,11 @@
     <Content Include="Content\bootstrap-grid.css.map" />
     <Content Include="Areas\Rentings\Views\web.config" />
     <Content Include="Areas\Rentings\Views\Rentings\Create.cshtml" />
-    <Content Include="Areas\Rentings\Views\Rentings\Delete.cshtml" />
+    <Content Include="Areas\Rentings\Views\Rentings\Return.cshtml" />
     <Content Include="Areas\Rentings\Views\Rentings\Index.cshtml" />
+    <Content Include="Areas\Customers\Views\web.config" />
+    <Content Include="Areas\Customers\Views\Customers\Rentings.cshtml" />
+    <Content Include="Areas\Customers\Views\Customers\Index.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -413,6 +418,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Customers\Models\" />
+    <Folder Include="Areas\Customers\Views\Shared\" />
     <Folder Include="Areas\Movies\Views\Shared\" />
     <Folder Include="Areas\Rentings\Views\Shared\" />
   </ItemGroup>

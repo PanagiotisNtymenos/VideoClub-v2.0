@@ -1,0 +1,89 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<VideoClub.Core.Entities.Renting>
+@{
+    ViewBag.Title = "Κρατήσεις";
+}
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<h2>@ViewBag.Title: <span class="ui-icon-link">@ViewBag.Customer</span></h2>
+
+<table class="table">
+    @if (Model.Count() > 0)
+    {
+        <thead>
+            <tr>
+                <th>Τίτλος</th>
+                <th>ID Κόπιας</th>
+                <th>Ημ. Επιστροφής</th>
+                <th>Κατάσταση</th>
+                <th>Σχόλια Κρ.</th>
+                <th>Σχόλια Επ.</th>
+                <th></th>
+            </tr>
+        </thead>
+    }
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            <tr class="table-default">
+                <td>
+                    @Html.DisplayFor(m => item.Copy.Movie.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.Copy.Id)
+                </td>
+                <td>
+                    @if (DateTime.Compare(item.ScheduledReturnDate, DateTime.Now) < 0 && item.IsActive)
+                    {
+                        <div style="color:red">
+                            @Html.DisplayFor(m => item.ReturnDate)
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="color:green">
+                            @Html.DisplayFor(m => item.ReturnDate)
+                        </div>
+                    }
+
+                </td>
+                <td>
+                    @if (!item.IsActive)
+                    {
+                        <div style="color:red">
+                            Μη Ενεργή
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="color:green">
+                            Ενεργή
+                        </div>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.RentingNotes)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.ReturnNotes)
+                </td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("return", "rentings", new { area="rentings",rentingId = item.Id })'">x</button>
+                    }
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("rentings", new { page, customer = ViewBag.Customer }))
+

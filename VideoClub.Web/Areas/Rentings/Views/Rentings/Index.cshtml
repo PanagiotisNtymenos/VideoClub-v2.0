@@ -37,10 +37,10 @@
                     @Html.DisplayFor(m => item.Copy.Id)
                 </td>
                 <td>
-                    @Html.ActionLink(item.User.UserName, "../customers/rentings", new { customer = item.User.UserName })
+                    @Html.ActionLink(item.User.UserName, "rentings", "customers", new { Area = "customers" }, new { customer = item.User.UserName })
                 </td>
                 <td>
-                    @if (DateTime.Compare(item.ScheduledReturnDate, DateTime.Now) < 0)
+                    @if (DateTime.Compare(item.ReturnDate, DateTime.Now) < 0)
                     {
                         <div style="color:red">
                             @item.ReturnDate.ToString("dd/MM/yyyy")
@@ -58,7 +58,7 @@
                     @Html.DisplayFor(m => item.RentingNotes)
                 </td>
                 <td>
-                    <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("delete", "rentings", new { rentingId = item.Id })'">x</button>
+                    <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("return", "rentings", new { rentingId = item.Id })'">x</button>
                 </td>
             </tr>
 

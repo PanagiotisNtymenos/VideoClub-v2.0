@@ -12,5 +12,6 @@ namespace VideoClub.Core.Interfaces
         // Get
         User GetUserByUserName(string username);
         Task<List<string>> GetUserNameByQuery(string q);
+        Task<List<User>> GetAllCustomers();
     }
 }

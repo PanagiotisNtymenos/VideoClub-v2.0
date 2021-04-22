@@ -20,7 +20,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
     [Authorize]
     public class MoviesController : Controller
     {
-        private IMapper Mapper => MapperInit.Init();
+    //    private IMapper Mapper => MapperInit.Init();
         private readonly IMovieService _movieService;
         private readonly ICopyService _copyService;
 
@@ -30,7 +30,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
             _copyService = copyService;
         }
 
-        // GET: movies/index
+        // GET: /movies
         public async Task<ActionResult> Index(string q, string genre, string currentQuery, int? page)
         {
             try
@@ -129,7 +129,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
             }
         }
 
-        // Get: movies/create
+        // Get: /movies/create
         [Authorize(Roles = "ADMIN")]
         public ActionResult Create()
         {

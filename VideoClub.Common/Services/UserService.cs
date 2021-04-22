@@ -29,5 +29,10 @@ namespace VideoClub.Common.Services
         {
             return await _context.Users.Where(m => m.UserName.StartsWith(q)).Select(m => m.UserName).ToListAsync();
         }
+
+        public async Task<List<User>> GetAllCustomers()
+        {
+            return await _context.Users.Where(u => u.Roles.Any(r => r.RoleId == "2")).Include(r => r.Rentings).ToListAsync();
+        }
     }
 }

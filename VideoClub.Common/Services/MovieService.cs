@@ -13,12 +13,10 @@ namespace VideoClub.Common.Services
     public class MovieService : IMovieService
     {
         private readonly VideoClubDbContext _context;
-        private readonly ICopyService _copyService;
 
-        public MovieService(VideoClubDbContext context, ICopyService copyService)
+        public MovieService(VideoClubDbContext context)
         {
             _context = context;
-            _copyService = copyService;
         }
 
         // Get
