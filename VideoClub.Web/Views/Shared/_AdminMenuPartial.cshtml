@@ -1,8 +1,8 @@
 ﻿@if (Request.IsAuthenticated && User.IsInRole("ADMIN"))
 {
     <ul class="navbar-nav mr-auto">
-        <li class="nav-item">@Html.ActionLink("Ταινίες", "index", "movies", new { Area = "movies" }, new { @class = "nav-link" })</li>
-        <li class="nav-item">@Html.ActionLink("Πελάτες", "index", "customers", new { Area = "customers" }, new { @class = "nav-link" })</li>
-        <li class="nav-item">@Html.ActionLink("Ενεργές Κρατήσεις", "index", "rentings", new { Area = "rentings" }, new { @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Ταινίες", "index", "movies", new { area = "movies" }, new { @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Πελάτες", "index", "customers", new { area = "customers" }, new { @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Ενεργές Κρατήσεις", "index", "rentings", new { area = "rentings" }, new { @class = "nav-link" })</li>
     </ul>
 }

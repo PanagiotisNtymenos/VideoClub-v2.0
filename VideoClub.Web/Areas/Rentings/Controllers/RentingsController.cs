@@ -33,7 +33,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             try
             {
                 // rules of paging
-                int PageSize = 3;
+                int PageSize = 5;
                 int PageNumber = (page ?? 1);
 
                 List<Renting> allRentings = await _rentingService.GetAllActiveRentings();
@@ -101,32 +101,23 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 ModelState.AddModelError("", "Συμπληρώστε όλα τα απαραίτητα πεδία!");
                 model.Username = null;
                 model.Title = null;
-                model.MovieId = 0;
+                model.MovieId = null;
                 return View(model);
             }
             try
             {
-                User user;
-                Copy copy;
-                try
+                User user = _userService.GetUserByUserName(model.Username);
+                Copy copy = await _copyService.GetAvailableCopyById((int)model.MovieId);
+
+                if (user == null)
                 {
-                    user = _userService.GetUserByUserName(model.Username);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
                     ModelState.AddModelError("", "Δεν υπάρχει αυτός ο πελάτης!");
                     model.Username = null;
                     return View(model);
                 }
 
-                try
+                if (copy == null)
                 {
-                    copy = await _copyService.GetAvailableCopyById((int)model.MovieId);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
                     ModelState.AddModelError("", "Δεν υπάρχει αυτή η ταινία!");
                     model.Title = null;
                     model.MovieId = 0;
