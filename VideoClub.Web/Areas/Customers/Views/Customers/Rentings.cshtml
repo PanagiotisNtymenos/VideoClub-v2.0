@@ -8,7 +8,7 @@
 }
 
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
-<h2>@ViewBag.Title: <span class="ui-icon-link">@ViewBag.Customer</span></h2>
+<h2>@ViewBag.Title: <span class="ui-icon-link text-muted">@ViewBag.Customer</span></h2>
 
 <table class="table">
     @if (Model.Count() > 0)
@@ -74,7 +74,7 @@
                 <td>
                     @if (item.IsActive)
                     {
-                        <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("return", "rentings", new { area="rentings",rentingId = item.Id })'">x</button>
+                        <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("return", "rentings", new { area="rentings",rentingId = item.Id })'"><strong>x</strong></button>
                     }
                 </td>
             </tr>

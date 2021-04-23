@@ -13,7 +13,6 @@ namespace VideoClub.Core.Entities
         {
             RentingDate = DateTime.Now;
             ScheduledReturnDate = DateTime.Now.AddDays(7);
-            ReturnDate = DateTime.Now.AddDays(7);
             IsActive = true;
             RentingNotes = rentingNotes;
             ReturnNotes = null;

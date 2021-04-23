@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace VideoClub.Core.Enumerations
         Τρόμου,
         Μυστηρίου,
         Γουέστερν,
-        SciFi
+        SciFi,
+        Παιδικά 
     }
 }

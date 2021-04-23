@@ -10,12 +10,13 @@ namespace VideoClub.Web.Areas.Movies.Models
         public string Title { get; set; }
 
         [Required]
+        public string Summary { get; set; }
+
+        [Required]
         public List<Genres> Genres { get; set; }
 
         [Required]
-        public int copiesNumber { get; set; }
+        public int CopiesNumber { get; set; }
 
-        [Required]
-        public string Summary { get; set; }
     }
 }

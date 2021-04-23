@@ -8,23 +8,26 @@ using VideoClub.Core.Entities;
 using VideoClub.Core.Interfaces;
 using System.Diagnostics;
 using VideoClub.Web.Areas.Rentings.Models;
+using AutoMapper;
 
 namespace VideoClub.Web.Areas.Rentings.Controllers
 {
     [Authorize(Roles = "ADMIN")]
     public class RentingsController : Controller
     {
+        private readonly IMapper _mapper;
         private readonly IRentingService _rentingService;
         private readonly ICopyService _copyService;
         private readonly IUserService _userService;
         private readonly IMovieService _movieService;
 
-        public RentingsController(IRentingService rentingService, ICopyService copyService, IUserService userService, IMovieService movieService)
+        public RentingsController(IRentingService rentingService, ICopyService copyService, IUserService userService, IMovieService movieService, IMapper mapper)
         {
             _rentingService = rentingService;
             _copyService = copyService;
             _userService = userService;
             _movieService = movieService;
+            _mapper = mapper;
         }
 
         // GET: /rentings
@@ -106,8 +109,8 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             }
             try
             {
-                User user = _userService.GetUserByUserName(model.Username);
-                Copy copy = await _copyService.GetAvailableCopyById((int)model.MovieId);
+                var user = _userService.GetUserByUserName(model.Username);
+                var copy = await _copyService.GetAvailableCopyById((int)model.MovieId);
 
                 if (user == null)
                 {
@@ -124,7 +127,8 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                     return View(model);
                 }
 
-                Renting renting = new Renting(model.RentingNotes);
+                var renting = _mapper.Map<Renting>(model);
+                renting.ReturnDate = DateTime.Now.AddDays(7);
 
                 await _rentingService.AddRenting(renting, user, copy);
 
@@ -154,7 +158,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             try
             {
 
-                Renting renting = await _rentingService.GetRentingById(rentingId);
+                var renting = await _rentingService.GetRentingById(rentingId);
 
                 if (renting.IsActive)
                     return View(renting);
@@ -174,30 +178,18 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
         {
             try
             {
-                Renting renting;
-                try
-                {
-                    renting = await _rentingService.GetRentingById(model.Id);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    ModelState.AddModelError("", "Δεν υπάρχει αυτή η κράτηση!");
-                    return View(model);
-                }
-
+                var renting = await _rentingService.GetRentingById(model.Id);
                 renting.IsActive = false;
                 renting.ReturnNotes = model.ReturnNotes;
                 renting.ReturnDate = DateTime.Now;
                 renting.Copy.IsAvailable = true;
 
                 await _rentingService.ReturnRenting(renting);
-
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                ModelState.AddModelError("", "Λάθος στοιχεία!");
+                ModelState.AddModelError("", "Δεν υπάρχει αυτή η κράτηση!");
                 return View(model);
             }
 
@@ -235,6 +227,11 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             List<string> users = await _userService.GetUserNameByQuery(term);
 
             return Json(users, JsonRequestBehavior.AllowGet);
+        }
+
+        private static object ADMIN()
+        {
+            throw new NotImplementedException();
         }
     }
 }

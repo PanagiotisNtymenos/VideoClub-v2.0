@@ -1,33 +1,32 @@
 ﻿using PagedList;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using VideoClub.Core.Interfaces;
 using VideoClub.Core.Entities;
 using VideoClub.Core.Enumerations;
-using VideoClub.Infrastructure.Data;
 using VideoClub.Web.Areas.Movies.Models;
 using System.Threading.Tasks;
-using VideoClub.Common.Services;
 using AutoMapper;
-using VideoClub.Web.Mappings;
+using VideoClub.Infrastructure.Services.Interfaces;
 
 namespace VideoClub.Web.Areas.Movies.Controllers
 {
     [Authorize]
     public class MoviesController : Controller
     {
-    //    private IMapper Mapper => MapperInit.Init();
-        private readonly IMovieService _movieService;
-        private readonly ICopyService _copyService;
+        private readonly ILoggingService _logger;
+        private readonly IMapper _mapper;
+        private readonly IMovieService _movie;
+        private readonly ICopyService _copy;
 
-        public MoviesController(IMovieService movieService, ICopyService copyService)
+        public MoviesController(IMovieService movie, ICopyService copy, IMapper mapper, ILoggingService logger)
         {
-            _movieService = movieService;
-            _copyService = copyService;
+            _movie = movie;
+            _copy = copy;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         // GET: /movies
@@ -56,12 +55,12 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                 if (!String.IsNullOrEmpty(q))
                 {
                     // in case of search, get only searched movies
-                    movies = await _movieService.GetMoviesByQuery(q);
+                    movies = await _movie.GetMoviesByQuery(q);
                 }
                 else
                 {
                     // get every movie in DB
-                    movies = await _movieService.GetAllMovies();
+                    movies = await _movie.GetAllMovies();
                 }
 
 
@@ -120,13 +119,15 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                                      .ToList();
 
                 ViewBag.Genres = new SelectList(Enum.GetNames(typeof(Genres)));
+                _logger.Writer.Information("Showing movies!");
                 return View(allMovies.ToPagedList(PageNumber, PageSize));
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                _logger.Writer.Fatal(e, "Failed to present View!");
                 return View("Error");
             }
+
         }
 
         // Get: /movies/create
@@ -152,24 +153,22 @@ namespace VideoClub.Web.Areas.Movies.Controllers
 
             try
             {
-                if (model.copiesNumber <= 0)
+                if (model.CopiesNumber <= 0)
                 {
                     ModelState.AddModelError("", "Δημιουργήστε τουλάχιστον μια κόπια!");
                     ViewBag.Genres = new MultiSelectList(Enum.GetValues(typeof(Genres)));
                     return View(model);
                 }
 
-                Movie movie = new Movie(model.Title, model.Summary);
+                var movie = _mapper.Map<Movie>(model);
 
-                await _movieService.AddMovie(movie, model.Genres, model.copiesNumber);
+                await _movie.AddMovie(movie, model.Genres, model.CopiesNumber);
 
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
-                ModelState.AddModelError("", "Λάθος στοιχεία!");
-                ViewBag.Genres = new MultiSelectList(Enum.GetValues(typeof(Genres)));
-                return View(model);
+                _logger.Writer.Fatal(e, "Can't create this movie");
+                return View("Error");
             }
 
             return RedirectToAction("index", "movies");
@@ -177,7 +176,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
 
         public async Task<JsonResult> MoviesAutoComplete(string term)
         {
-            List<Movie> movies = await _movieService.GetMoviesByQuery(term);
+            List<Movie> movies = await _movie.GetMoviesByQuery(term);
             if (movies.Count() > 0)
             {
                 var moviesAndIds = new Object[movies.Count()];

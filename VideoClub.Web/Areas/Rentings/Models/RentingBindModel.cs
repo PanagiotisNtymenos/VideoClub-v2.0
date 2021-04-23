@@ -25,7 +25,7 @@ namespace VideoClub.Web.Areas.Rentings.Models
         [DisplayFormat(DataFormatString = "{0:d/MM/yyyy}")]
         public DateTime ScheduledReturnDate { get; set; }
 
-        public string RentingNotes { get; set; }
+        public string RentNotes { get; set; }
 
         public string ReturnNotes { get; set; }
 

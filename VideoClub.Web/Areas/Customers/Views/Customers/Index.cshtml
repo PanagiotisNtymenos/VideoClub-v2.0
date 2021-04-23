@@ -37,14 +37,12 @@
                 <td>
                     @if (item.Rentings.Count() == 0)
                     {
-                        <div style="color:red">
-                            @item.Rentings.Count()
-                        </div>
+                        <div style="color:red">0</div>
                     }
                     else
                     {
                         <div style="color:green">
-                            @item.Rentings.Count()
+                            @item.Rentings.Where(r => r.IsActive).Count()
                         </div>
                     }
                 </td>
