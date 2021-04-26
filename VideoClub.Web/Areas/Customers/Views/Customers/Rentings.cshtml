@@ -74,7 +74,7 @@
                 <td>
                     @if (item.IsActive)
                     {
-                        <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("return", "rentings", new { area="rentings",rentingId = item.Id })'"><strong>x</strong></button>
+                        <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("return", "rentings", new { area="rentings",rentingId = item.Id })'">>|</button>
                     }
                 </td>
             </tr>

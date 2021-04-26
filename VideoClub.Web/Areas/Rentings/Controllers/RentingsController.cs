@@ -9,25 +9,29 @@ using VideoClub.Core.Interfaces;
 using System.Diagnostics;
 using VideoClub.Web.Areas.Rentings.Models;
 using AutoMapper;
+using Serilog;
+using VideoClub.Infrastructure.Services.Interfaces;
 
 namespace VideoClub.Web.Areas.Rentings.Controllers
 {
     [Authorize(Roles = "ADMIN")]
     public class RentingsController : Controller
     {
+        private readonly ILoggingService _logger;
         private readonly IMapper _mapper;
         private readonly IRentingService _rentingService;
         private readonly ICopyService _copyService;
         private readonly IUserService _userService;
         private readonly IMovieService _movieService;
 
-        public RentingsController(IRentingService rentingService, ICopyService copyService, IUserService userService, IMovieService movieService, IMapper mapper)
+        public RentingsController(IRentingService rentingService, ICopyService copyService, IUserService userService, IMovieService movieService, IMapper mapper, ILoggingService logger)
         {
             _rentingService = rentingService;
             _copyService = copyService;
             _userService = userService;
             _movieService = movieService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         // GET: /rentings
@@ -57,30 +61,17 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             {
                 string title = null;
                 string username = null;
-                try
-                {
-                    if (movieId != null)
-                    {
-                        Copy copy = await _copyService.GetAvailableCopyById((int)movieId);
-                        if (copy != null) title = copy.Movie.Title;
-                    }
 
-                }
-                catch (Exception e)
+                if (movieId != null)
                 {
-                    Debug.WriteLine(e);
-                    //return View("Error");
+                    Copy copy = await _copyService.GetAvailableCopyById((int)movieId);
+                    if (copy != null) title = copy.Movie.Title;
                 }
 
-                try
+                if (!String.IsNullOrEmpty(customer))
                 {
                     User user = _userService.GetUserByUserName(customer);
                     if (user != null) username = user.UserName;
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    //return View("Error");
                 }
 
                 RentingBindModel rentingBindModel = new RentingBindModel(username, title, movieId);
@@ -89,7 +80,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                _logger.Writer.Fatal(e, "/rentings/create View could not be loaded.");
                 return View("Error");
             }
         }
@@ -102,9 +93,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Συμπληρώστε όλα τα απαραίτητα πεδία!");
-                model.Username = null;
-                model.Title = null;
-                model.MovieId = null;
+                model.Username = null; model.Title = null; model.MovieId = null;
                 return View(model);
             }
             try
@@ -122,24 +111,21 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 if (copy == null)
                 {
                     ModelState.AddModelError("", "Δεν υπάρχει αυτή η ταινία!");
-                    model.Title = null;
-                    model.MovieId = 0;
+                    model.Title = null; model.MovieId = 0;
                     return View(model);
                 }
 
                 var renting = _mapper.Map<Renting>(model);
                 renting.ReturnDate = DateTime.Now.AddDays(7);
+                renting.IsActive = true;
 
                 await _rentingService.AddRenting(renting, user, copy);
-
+                _logger.Writer.Information("Renting was created for User: {Username} and Movie: {Title} with Copy: {CopyID}", user.UserName, copy.Movie.Title, copy.Id);
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
-                ModelState.AddModelError("", "Λάθος στοιχεία!");
-                model.Username = null;
-                model.Title = null;
-                model.MovieId = 0;
+                _logger.Writer.Fatal(e, "Renting could not be created.");
+                model.Username = null; model.Title = null; model.MovieId = 0;
                 return View(model);
             }
 
@@ -157,7 +143,6 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
 
             try
             {
-
                 var renting = await _rentingService.GetRentingById(rentingId);
 
                 if (renting.IsActive)
@@ -165,7 +150,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                _logger.Writer.Fatal(e, "/rentings/return?returnId={RentingID} View could not be loaded.", rentingId);
                 return View("Error");
             }
             return View("Error");
@@ -185,11 +170,11 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 renting.Copy.IsAvailable = true;
 
                 await _rentingService.ReturnRenting(renting);
+                _logger.Writer.Information("Renting: {RentingID} with User: {Username}, Copy: {CopyID} and Movie: {Title} was returned.", renting.Id, renting.User.UserName, renting.Copy.Id, renting.Copy.Movie.Title);
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
-                ModelState.AddModelError("", "Δεν υπάρχει αυτή η κράτηση!");
+                _logger.Writer.Fatal(e, "Return didn't complete.");
                 return View(model);
             }
 
@@ -229,9 +214,5 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             return Json(users, JsonRequestBehavior.AllowGet);
         }
 
-        private static object ADMIN()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

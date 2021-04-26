@@ -1,24 +1,26 @@
 ﻿using PagedList;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using VideoClub.Core.Entities;
 using VideoClub.Core.Interfaces;
+using VideoClub.Infrastructure.Services.Interfaces;
 
 namespace VideoClub.Web.Areas.Customers.Controllers
 {
     [Authorize(Roles = "ADMIN")]
     public class CustomersController : Controller
     {
+        private readonly ILoggingService _logger;
         private readonly IRentingService _rentingService;
         private readonly IUserService _userService;
 
-        public CustomersController(IRentingService rentingService, IUserService userService)
+        public CustomersController(IRentingService rentingService, IUserService userService, ILoggingService logger)
         {
             _rentingService = rentingService;
             _userService = userService;
+            _logger = logger;
         }
 
         // GET: /customers
@@ -36,7 +38,7 @@ namespace VideoClub.Web.Areas.Customers.Controllers
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                _logger.Writer.Fatal(e, "/customers View could not be loaded.");
                 return View("Error");
             }
         }
@@ -64,7 +66,7 @@ namespace VideoClub.Web.Areas.Customers.Controllers
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                _logger.Writer.Fatal(e, "/customers/rentings?customer={Customer} View could not be loaded.", customer);
                 return View("Error");
             }
         }

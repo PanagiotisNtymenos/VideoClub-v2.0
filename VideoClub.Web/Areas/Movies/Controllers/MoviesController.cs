@@ -119,12 +119,11 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                                      .ToList();
 
                 ViewBag.Genres = new SelectList(Enum.GetNames(typeof(Genres)));
-                _logger.Writer.Information("Showing movies!");
                 return View(allMovies.ToPagedList(PageNumber, PageSize));
             }
             catch (Exception e)
             {
-                _logger.Writer.Fatal(e, "Failed to present View!");
+                _logger.Writer.Fatal(e, "/movies View could not be loaded.");
                 return View("Error");
             }
 
@@ -138,7 +137,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
             return View();
         }
 
-        // POST: movies/create
+        // POST: /movies/create
         [HttpPost]
         [Authorize(Roles = "ADMIN")]
         [ValidateAntiForgeryToken]
@@ -163,11 +162,12 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                 var movie = _mapper.Map<Movie>(model);
 
                 await _movie.AddMovie(movie, model.Genres, model.CopiesNumber);
+                _logger.Writer.Information("Movie '{Title}' was created.", movie.Title);
 
             }
             catch (Exception e)
             {
-                _logger.Writer.Fatal(e, "Can't create this movie");
+                _logger.Writer.Fatal(e, "Movie could not be created.");
                 return View("Error");
             }
 
