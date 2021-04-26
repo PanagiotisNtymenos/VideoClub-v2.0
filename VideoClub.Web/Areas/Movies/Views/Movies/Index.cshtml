@@ -13,7 +13,7 @@
 @using (Html.BeginForm("", "movies", FormMethod.Get, new { @class = "form-inline my-2 my-lg-0" }))
 {
     <p style="width:100%">
-        @Html.TextBox("q", ViewBag.currentFilter as string, new { @class = "form-control mr-sm-2" })
+        @Html.TextBox("q", ViewBag.currentQuery as string, new { @class = "form-control mr-sm-2" })
         @Html.DropDownList("genre", ViewBag.Genres as SelectList, "--", new { @class = "form-control mr-sm-2" })
         <input class="btn btn-secondary" type="submit" value="Search" />
         @if (User.IsInRole("ADMIN"))
@@ -95,5 +95,5 @@
 <br />
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-    @Html.PagedListPager(Model, page => Url.Action("", new { page, currentQuery = ViewBag.currentFilter, genre = ViewBag.currentGenre }))
+    @Html.PagedListPager(Model, page => Url.Action("", new { page, q = ViewBag.currentQuery, genre = ViewBag.currentGenre }))
 

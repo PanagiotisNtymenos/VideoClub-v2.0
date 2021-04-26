@@ -30,23 +30,16 @@ namespace VideoClub.Web.Areas.Movies.Controllers
         }
 
         // GET: /movies
-        public async Task<ActionResult> Index(string q, string genre, string currentQuery, int? page)
+        public async Task<ActionResult> Index(string q, string genre, int? page)
         {
             try
             {
                 // keep query for the next pages
-                if (q != null)
-                {
-                    page = 1;
-                }
-                else
-                {
-                    q = currentQuery;
-                }
-                ViewBag.currentFilter = q;
+                if (!String.IsNullOrEmpty(q))
+                    ViewBag.currentQuery = q;
 
                 // rules of paging
-                int PageSize = 3;
+                int PageSize = 5;
                 int PageNumber = (page ?? 1);
 
                 List<MovieViewModel> allMovies = new List<MovieViewModel>();
@@ -129,7 +122,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
 
         }
 
-        // Get: /movies/create
+        // GET: /movies/create
         [Authorize(Roles = "ADMIN")]
         public ActionResult Create()
         {
