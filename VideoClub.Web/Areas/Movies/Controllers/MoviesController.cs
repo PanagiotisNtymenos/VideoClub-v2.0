@@ -42,72 +42,53 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                 int PageSize = 5;
                 int PageNumber = (page ?? 1);
 
-                List<MovieViewModel> allMovies = new List<MovieViewModel>();
-                List<Movie> movies = new List<Movie>();
+                var allMovies = new List<MovieViewModel>();
+                var movies = new List<Movie>();
 
                 if (!String.IsNullOrEmpty(q))
                 {
                     // in case of search, get only searched movies
-                    movies = await _movie.GetMoviesByQuery(q);
+                    movies = await _movie.GetAvailableMoviesByQuery(q);
                 }
                 else
                 {
                     // get every movie in DB
-                    movies = await _movie.GetAllMovies();
+                    movies = await _movie.GetAllAvailableMovies();
                 }
 
 
                 // filter with genre
                 if (!String.IsNullOrEmpty(genre))
                 {
-                    if (Enum.IsDefined(typeof(Genres), genre))
+                    if (!Enum.IsDefined(typeof(Genres), genre)) return RedirectToAction("index", "movies");
+
+                    ViewBag.currentGenre = genre;
+                    var filteredMovies = new List<Movie>();
+                    foreach (var movie in movies)
                     {
-                        ViewBag.currentGenre = genre;
-                        List<Movie> FilteredMovies = new List<Movie>();
-                        foreach (Movie movie in movies)
+                        foreach (var movieGenre in movie.MovieGenres)
                         {
-                            foreach (MovieGenre movieGenre in movie.MovieGenres)
+                            if (movieGenre.Genre == ((int)Enum.Parse(typeof(Genres), genre)))
                             {
-                                if (movieGenre.Genre == ((int)Enum.Parse(typeof(Genres), genre)))
-                                {
-                                    FilteredMovies.Add(movie);
-                                    break;
-                                }
+                                filteredMovies.Add(movie);
+                                break;
                             }
-
                         }
-                        movies = FilteredMovies;
-                    }
-                    else
-                    {
-                        allMovies = allMovies.OrderBy(m => m.Movie.Title)
-                                     .Take(allMovies.Count())
-                                     .ToList();
 
-                        ViewBag.Genres = new SelectList(Enum.GetNames(typeof(Genres)));
-                        return View(allMovies.ToPagedList(PageNumber, PageSize));
                     }
+                    movies = filteredMovies;
                 }
 
 
                 // form ViewModel
-                foreach (Movie movie in movies)
+                allMovies = _mapper.Map<List<MovieViewModel>>(movies);
+                foreach (var movie in allMovies)
                 {
-
-                    List<Copy> availableCopies = movie.Copies.Where(c => c.IsAvailable).ToList();
-
-                    List<Genres> genres = new List<Genres>();
-
-                    foreach (MovieGenre mg in movie.MovieGenres)
-                    {
-                        genres.Add((Genres)mg.Genre);
-                    }
-
-                    allMovies.Add(new MovieViewModel(movie, genres, availableCopies.Count()));
+                    movie.Genres = Movie.ConvertToGenres(movie.MovieGenres);
                 }
 
                 // apply OrderBy and Take method
-                allMovies = allMovies.OrderBy(m => m.Movie.Title)
+                allMovies = allMovies.OrderBy(m => m.Id)
                                      .Take(allMovies.Count())
                                      .ToList();
 
@@ -169,13 +150,13 @@ namespace VideoClub.Web.Areas.Movies.Controllers
 
         public async Task<JsonResult> MoviesAutoComplete(string term)
         {
-            List<Movie> movies = await _movie.GetMoviesByQuery(term);
+            var movies = await _movie.GetMoviesByQuery(term);
             if (movies.Count() > 0)
             {
                 var moviesAndIds = new Object[movies.Count()];
 
                 int i = 0;
-                foreach (Movie movie in movies)
+                foreach (var movie in movies)
                 {
                     moviesAndIds[i] = new
                     {

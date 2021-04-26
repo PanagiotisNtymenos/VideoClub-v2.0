@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VideoClub.Core.Enumerations;
 
 namespace VideoClub.Core.Entities
 {
@@ -32,5 +33,16 @@ namespace VideoClub.Core.Entities
 
         public virtual List<MovieGenre> MovieGenres { get; set; }
 
+
+        public static List<Genres> ConvertToGenres(List<MovieGenre> movieGenres)
+        {
+            var genres = new List<Genres>();
+
+            foreach (var mg in movieGenres)
+            {
+                genres.Add((Genres)mg.Genre);
+            }
+            return genres;
+        }
     }
 }

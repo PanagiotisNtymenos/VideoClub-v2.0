@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\BaseEntity.cs" />
     <Compile Include="Entities\Copy.cs" />
     <Compile Include="Entities\Movie.cs" />
     <Compile Include="Entities\MovieGenre.cs" />

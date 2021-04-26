@@ -8,20 +8,18 @@ namespace VideoClub.Web.Areas.Movies.Models
     public class MovieViewModel
     {
 
-        [Required]
-        public Movie Movie { get; set; }
+        public int Id { get; set; }
 
-        [Required]
+        public string Title { get; set; }
+
+        public string Summary { get; set; }
+
+        public int Availability { get; set; }
+
+        public List<MovieGenre> MovieGenres { get; set; }
+
         public List<Genres> Genres { get; set; }
 
-        [Required]
-        public int Availabilty { get; set; }
-
-        public MovieViewModel(Movie Movie, List<Genres> Genres, int Availabilty)
-        {
-            this.Movie = Movie;
-            this.Genres = Genres;
-            this.Availabilty = Availabilty;
-        }
+        public MovieViewModel() { }
     }
 }

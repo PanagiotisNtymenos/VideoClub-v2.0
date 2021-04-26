@@ -10,6 +10,7 @@ namespace VideoClub.Core.Interfaces
         // Get
         Task<List<Movie>> GetMoviesByQuery(string q);
         Task<List<Movie>> GetAvailableMoviesByQuery(string q);
+        Task<List<Movie>> GetAllAvailableMovies();
         Task<List<Movie>> GetAllMovies();
 
         // Add

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+
 
 namespace VideoClub.Core.Entities
 {
-    public class Copy
+    public class Copy : BaseEntity<int>
     {
         public Copy(Movie movie)
         {
@@ -15,8 +12,6 @@ namespace VideoClub.Core.Entities
         }
 
         public Copy() { }
-
-        public int Id { get; set; }
 
         public virtual Movie Movie { get; set; }
 

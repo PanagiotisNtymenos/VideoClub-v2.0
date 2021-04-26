@@ -39,13 +39,13 @@
         {
             <tr class="table-default">
                 <td>
-                    @Html.DisplayFor(m => item.Movie.Id)
+                    @Html.DisplayFor(m => item.Id)
                 </td>
                 <td>
-                    @Html.DisplayFor(m => item.Movie.Title)
+                    @Html.DisplayFor(m => item.Title)
                 </td>
                 <td>
-                    @Html.DisplayFor(m => item.Movie.Summary)
+                    @Html.DisplayFor(m => item.Summary)
                 </td>
                 <td>
                     @foreach (var genre in item.Genres)
@@ -61,29 +61,29 @@
                     }
                 </td>
                 <td style="text-align: center;">
-                    @if (item.Availabilty == 0)
+                    @if (item.Availability == 0)
                     {
                         <div style="color:red">
-                            @Html.DisplayFor(m => item.Availabilty)
+                            @Html.DisplayFor(m => item.Availability)
                         </div>
                     }
                     else
                     {
                         <div style="color:green">
-                            @Html.DisplayFor(m => item.Availabilty)
+                            @Html.DisplayFor(m => item.Availability)
                         </div>
                     }
                 </td>
                 <td>
                     @if (User.IsInRole("ADMIN"))
                     {
-                        if (item.Availabilty == 0)
+                        if (item.Availability == 0)
                         {
                             <button type="button" disabled class="btn btn-dark">></button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-dark" onclick="location.href='@Url.Action("create", "rentings", new { Area="rentings", movieId = item.Movie.Id })'">></button>
+                            <button type="button" class="btn btn-dark" onclick="location.href='@Url.Action("create", "rentings", new { Area="rentings", movieId = item.Id })'">></button>
                         }
                     }
                 </td>
