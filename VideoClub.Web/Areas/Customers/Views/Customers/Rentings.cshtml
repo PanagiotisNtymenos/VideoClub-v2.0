@@ -16,9 +16,9 @@
         <thead>
             <tr>
                 <th>Τίτλος</th>
-                <th>ID Κόπιας</th>
-                <th>Ημ. Επιστροφής</th>
-                <th>Κατάσταση</th>
+                <th style="text-align:center">ID Κόπιας</th>
+                <th style="text-align:center">Ημ. Επιστροφής</th>
+                <th style="text-align:center">Κατάσταση</th>
                 <th>Σχόλια Κρ.</th>
                 <th>Σχόλια Επ.</th>
                 <th></th>
@@ -33,10 +33,10 @@
                 <td>
                     @Html.DisplayFor(m => item.Copy.Movie.Title)
                 </td>
-                <td>
+                <td style="text-align:center">
                     @Html.DisplayFor(m => item.Copy.Id)
                 </td>
-                <td>
+                <td style="text-align:center">
                     @if (DateTime.Compare(item.ScheduledReturnDate, DateTime.Now) < 0 && item.IsActive)
                     {
                         <div style="color:red">
@@ -51,7 +51,7 @@
                     }
 
                 </td>
-                <td>
+                <td style="text-align:center">
                     @if (!item.IsActive)
                     {
                         <div style="color:red">

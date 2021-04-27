@@ -42,7 +42,6 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                 int PageSize = 5;
                 int PageNumber = (page ?? 1);
 
-                var allMovies = new List<MovieViewModel>();
                 var movies = new List<Movie>();
 
                 if (!String.IsNullOrEmpty(q))
@@ -53,7 +52,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                 else
                 {
                     // get every movie in DB
-                    movies = await _movie.GetAllAvailableMovies();
+                    movies = await _movie.GetAllMovies();
                 }
 
 
@@ -81,7 +80,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
 
 
                 // form ViewModel
-                allMovies = _mapper.Map<List<MovieViewModel>>(movies);
+                var allMovies = _mapper.Map<List<MovieViewModel>>(movies);
                 foreach (var movie in allMovies)
                 {
                     movie.Genres = Movie.ConvertToGenres(movie.MovieGenres);
@@ -155,7 +154,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
             {
                 var moviesAndIds = new Object[movies.Count()];
 
-                int i = 0;
+                var i = 0;
                 foreach (var movie in movies)
                 {
                     moviesAndIds[i] = new

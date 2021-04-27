@@ -37,7 +37,7 @@ namespace VideoClub.Common.Services
 
         public async Task<List<Movie>> GetAllAvailableMovies()
         {
-            return await _context.Movies.Include(i => i.Copies).Include(i => i.MovieGenres).ToListAsync();
+            return await _context.Movies.Include(i => i.Copies.Where(c => c.IsAvailable)).Include(i => i.MovieGenres).ToListAsync();
         }
 
         public async Task<List<Movie>> GetAllMovies()

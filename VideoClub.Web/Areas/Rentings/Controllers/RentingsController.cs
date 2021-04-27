@@ -40,10 +40,10 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             try
             {
                 // rules of paging
-                int PageSize = 5;
-                int PageNumber = (page ?? 1);
+                var PageSize = 5;
+                var PageNumber = (page ?? 1);
 
-                List<Renting> allRentings = await _rentingService.GetAllActiveRentings();
+                var allRentings = await _rentingService.GetAllActiveRentings();
 
                 return View(allRentings.ToPagedList(PageNumber, PageSize));
             }
@@ -64,13 +64,13 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
 
                 if (movieId != null)
                 {
-                    Copy copy = await _copyService.GetAvailableCopyById((int)movieId);
+                    var copy = await _copyService.GetAvailableCopyById((int)movieId);
                     if (copy != null) title = copy.Movie.Title;
                 }
 
                 if (!String.IsNullOrEmpty(customer))
                 {
-                    User user = _userService.GetUserByUserName(customer);
+                    var user = _userService.GetUserByUserName(customer);
                     if (user != null) username = user.UserName;
                 }
 
@@ -151,7 +151,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             catch (Exception e)
             {
                 _logger.Writer.Fatal(e, "/rentings/return?returnId={RentingID} View could not be loaded.", rentingId);
-                return View("Error");
+
             }
             return View("Error");
         }
@@ -183,7 +183,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
 
         public async Task<JsonResult> MoviesAutoComplete(string term)
         {
-            List<Movie> movies = await _movieService.GetAvailableMoviesByQuery(term);
+            var movies = await _movieService.GetAvailableMoviesByQuery(term);
 
             if (movies.Count() > 0)
             {
@@ -209,7 +209,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
 
         public async Task<JsonResult> UsersAutoComplete(string term)
         {
-            List<string> users = await _userService.GetUserNameByQuery(term);
+            var users = await _userService.GetUserNameByQuery(term);
 
             return Json(users, JsonRequestBehavior.AllowGet);
         }

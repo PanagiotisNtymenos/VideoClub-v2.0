@@ -29,10 +29,10 @@ namespace VideoClub.Web.Areas.Customers.Controllers
             try
             {
                 // rules of paging
-                int PageSize = 5;
-                int PageNumber = (page ?? 1);
+                var PageSize = 5;
+                var PageNumber = (page ?? 1);
 
-                List<User> allCustomers = await _userService.GetAllCustomers();
+                var allCustomers = await _userService.GetAllCustomers();
 
                 return View(allCustomers.ToPagedList(PageNumber, PageSize));
             }
@@ -51,12 +51,12 @@ namespace VideoClub.Web.Areas.Customers.Controllers
                 if (!String.IsNullOrEmpty(customer))
                 {
                     // rules of paging
-                    int PageSize = 5;
-                    int PageNumber = (page ?? 1);
+                    var PageSize = 5;
+                    var PageNumber = (page ?? 1);
 
                     ViewBag.Customer = customer;
 
-                    List<Renting> rentings = await _rentingService.GetUserRentings(customer);
+                    var rentings = await _rentingService.GetUserRentings(customer);
                     return View(rentings.ToPagedList(PageNumber, PageSize));
                 }
                 else

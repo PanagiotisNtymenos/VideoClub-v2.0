@@ -16,9 +16,11 @@ namespace VideoClub.Web.Mappings.Profile
             CreateMap<MovieBindModel, Movie>();
             CreateMap<Movie, MovieViewModel>()
                 .ForMember(desk => desk.Genres, opt => opt.Ignore())
-                .ForMember(desk => desk.Availability, opt => opt.MapFrom(src => src.Copies.Count()));
+                .ForMember(desk => desk.Availability, opt => opt.MapFrom(src => src.Copies.Where(c => c.IsAvailable).Count()));
             CreateMap<RentingBindModel, Renting>()
                 .ForMember(desk => desk.RentingNotes, opt => opt.MapFrom(src => src.RentNotes));
+            CreateMap<Renting, RentingBindModel>()
+                .ForMember(desk => desk.MovieId, opt => opt.MapFrom(src => src.Copy.Movie.Id));
         }
     }
 }
