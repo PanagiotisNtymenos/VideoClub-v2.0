@@ -40,9 +40,14 @@ namespace VideoClub.Common.Services
             return await _context.Movies.Include(i => i.Copies.Where(c => c.IsAvailable)).Include(i => i.MovieGenres).ToListAsync();
         }
 
+        public IQueryable<Movie> GetAllMoviesAsQueryable()
+        {
+            return _context.Movies.Include(m => m.Copies).Include(m => m.MovieGenres).OrderBy(m => m.Id).AsQueryable();
+        }
+
         public async Task<List<Movie>> GetAllMovies()
         {
-            return await _context.Movies.Include(m => m.Copies).Include(m => m.MovieGenres).ToListAsync();
+            return await _context.Movies.Include(m => m.Copies).Include(m => m.MovieGenres).OrderBy(m => m.Id).ToListAsync();
         }
 
         // Add

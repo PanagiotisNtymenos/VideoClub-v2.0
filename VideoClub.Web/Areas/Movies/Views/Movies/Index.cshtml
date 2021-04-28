@@ -1,7 +1,4 @@
-﻿@using PagedList;
-@using PagedList.Mvc;
-
-@model IPagedList<VideoClub.Web.Areas.Movies.Models.MovieViewModel>
+﻿@model VideoClub.Core.Models.PaginationModel<VideoClub.Web.Areas.Movies.Models.MovieViewModel>
 @{
     ViewBag.Title = "Ταινίες";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -35,7 +32,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Items)
         {
             <tr class="table-default">
                 <td>
@@ -93,7 +90,13 @@
 </table>
 
 <br />
-    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-
-    @Html.PagedListPager(Model, page => Url.Action("", new { page, q = ViewBag.currentQuery, genre = ViewBag.currentGenre }))
-
+    Page @(Model.TotalItems < Model.PageNum ? 0 : Model.PageNum) of @Model.TotalPages
+    <div style="padding:10px"></div>
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                @:<button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = i, q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'">@i</button>
+            }
+        </div>
+    </div>

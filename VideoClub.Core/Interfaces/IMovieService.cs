@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using VideoClub.Core.Entities;
 using VideoClub.Core.Enumerations;
@@ -11,6 +12,7 @@ namespace VideoClub.Core.Interfaces
         Task<List<Movie>> GetMoviesByQuery(string q);
         Task<List<Movie>> GetAvailableMoviesByQuery(string q);
         Task<List<Movie>> GetAllAvailableMovies();
+        IQueryable<Movie> GetAllMoviesAsQueryable();
         Task<List<Movie>> GetAllMovies();
 
         // Add

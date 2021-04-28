@@ -10,6 +10,8 @@ using VideoClub.Web.Areas.Movies.Models;
 using System.Threading.Tasks;
 using AutoMapper;
 using VideoClub.Infrastructure.Services.Interfaces;
+using VideoClub.Core.Models;
+using VideoClub.Core.DTOs;
 
 namespace VideoClub.Web.Areas.Movies.Controllers
 {
@@ -30,31 +32,18 @@ namespace VideoClub.Web.Areas.Movies.Controllers
         }
 
         // GET: /movies
-        public async Task<ActionResult> Index(string q, string genre, int? page)
+        public ActionResult Index(string q, string genre, int? page)
         {
             try
             {
-                // keep query for the next pages
+                var movies = _movie.GetAllMoviesAsQueryable();
+
+                // filter with query
                 if (!String.IsNullOrEmpty(q))
+                {
                     ViewBag.currentQuery = q;
-
-                // rules of paging
-                int PageSize = 5;
-                int PageNumber = (page ?? 1);
-
-                var movies = new List<Movie>();
-
-                if (!String.IsNullOrEmpty(q))
-                {
-                    // in case of search, get only searched movies
-                    movies = await _movie.GetAvailableMoviesByQuery(q);
+                    movies = movies.Where(m => m.Title.Contains(q));
                 }
-                else
-                {
-                    // get every movie in DB
-                    movies = await _movie.GetAllMovies();
-                }
-
 
                 // filter with genre
                 if (!String.IsNullOrEmpty(genre))
@@ -62,37 +51,13 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                     if (!Enum.IsDefined(typeof(Genres), genre)) return RedirectToAction("index", "movies");
 
                     ViewBag.currentGenre = genre;
-                    var filteredMovies = new List<Movie>();
-                    foreach (var movie in movies)
-                    {
-                        foreach (var movieGenre in movie.MovieGenres)
-                        {
-                            if (movieGenre.Genre == ((int)Enum.Parse(typeof(Genres), genre)))
-                            {
-                                filteredMovies.Add(movie);
-                                break;
-                            }
-                        }
-
-                    }
-                    movies = filteredMovies;
+                    int genreValue = (int)Enum.Parse(typeof(Genres), genre);
+                    movies = movies.Where(m => m.MovieGenres.Any(mg => mg.Genre == genreValue));
                 }
 
-
-                // form ViewModel
-                var allMovies = _mapper.Map<List<MovieViewModel>>(movies);
-                foreach (var movie in allMovies)
-                {
-                    movie.Genres = Movie.ConvertToGenres(movie.MovieGenres);
-                }
-
-                // apply OrderBy and Take method
-                allMovies = allMovies.OrderBy(m => m.Id)
-                                     .Take(allMovies.Count())
-                                     .ToList();
-
+                
                 ViewBag.Genres = new SelectList(Enum.GetNames(typeof(Genres)));
-                return View(allMovies.ToPagedList(PageNumber, PageSize));
+                return View(GetPaginatedMovies(new PaginationDto(page, 5), movies));
             }
             catch (Exception e)
             {
@@ -170,6 +135,25 @@ namespace VideoClub.Web.Areas.Movies.Controllers
             {
                 return Json(null, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        public PaginationModel<MovieViewModel> GetPaginatedMovies(PaginationDto pagination, IQueryable<Movie> movies)
+        {
+            var moviesCount = movies.Count();
+
+            var toSkip = (pagination.CurrentPage - 1) * pagination.PageSize;
+
+            movies = movies
+                    .Skip(toSkip)
+                    .Take(pagination.PageSize);
+
+            var movieViewModels = _mapper.Map<List<MovieViewModel>>(movies);
+            foreach (var movie in movieViewModels)
+            {
+                movie.Genres = Movie.ConvertToGenres(movie.MovieGenres);
+            }
+
+            return new PaginationModel<MovieViewModel>(movieViewModels, pagination.CurrentPage, pagination.PageSize, moviesCount);
         }
     }
 }
