@@ -20,6 +20,8 @@ namespace VideoClub.Core.Enumerations
         Μυστηρίου,
         Γουέστερν,
         SciFi,
-        Παιδικά 
+        Παιδικά,
+        Έγκλημα,
+        Βιογραφία
     }
 }

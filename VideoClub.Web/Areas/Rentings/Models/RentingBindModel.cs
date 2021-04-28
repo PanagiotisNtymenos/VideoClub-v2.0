@@ -10,13 +10,13 @@ namespace VideoClub.Web.Areas.Rentings.Models
     public class RentingBindModel
     {
 
-        [Required]
+        [Required(ErrorMessage ="Συμπληρώστε τον Τίτλο.")]
         public string Title { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Συμπληρώστε το ID της ταινίας.")]
         public int? MovieId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Συμπληρώστε τον Πελάτη.")]
         public string Username { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:d/MM/yyyy}")]

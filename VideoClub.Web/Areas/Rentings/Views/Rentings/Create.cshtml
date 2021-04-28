@@ -11,7 +11,7 @@
     @Html.AntiForgeryToken()
     <fieldset>
         <fieldset class="form-group">
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.ValidationSummary("", new { @class = "text-danger" })
 
             @if (Model.Username != null)
             {

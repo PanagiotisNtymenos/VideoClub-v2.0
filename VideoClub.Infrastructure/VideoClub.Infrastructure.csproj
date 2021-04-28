@@ -95,9 +95,13 @@
       <DependentUpon>202104261058319_CreateTables.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\DTOs\PaginationDto.cs" />
+    <Compile Include="Models\PaginationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Implementations\LoggingService.cs" />
+    <Compile Include="Services\Implementations\PaginationService.cs" />
     <Compile Include="Services\Interfaces\ILoggingService.cs" />
+    <Compile Include="Services\Interfaces\IPaginationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

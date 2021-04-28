@@ -1,5 +1,4 @@
-﻿
-namespace VideoClub.Core.DTOs
+﻿namespace VideoClub.Infrastructure.Models.DTOs
 {
     public class PaginationDto
     {

@@ -1,5 +1,4 @@
-﻿using PagedList;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -10,29 +9,32 @@ using VideoClub.Web.Areas.Movies.Models;
 using System.Threading.Tasks;
 using AutoMapper;
 using VideoClub.Infrastructure.Services.Interfaces;
-using VideoClub.Core.Models;
-using VideoClub.Core.DTOs;
+using System.Data.Entity;
+using VideoClub.Infrastructure.Models.DTOs;
+using VideoClub.Infrastructure.Models;
 
 namespace VideoClub.Web.Areas.Movies.Controllers
 {
-    [Authorize]
     public class MoviesController : Controller
     {
+        private readonly IPaginationService _pagination;
         private readonly ILoggingService _logger;
         private readonly IMapper _mapper;
         private readonly IMovieService _movie;
         private readonly ICopyService _copy;
 
-        public MoviesController(IMovieService movie, ICopyService copy, IMapper mapper, ILoggingService logger)
+        public MoviesController(IMovieService movie, ICopyService copy, IMapper mapper, ILoggingService logger, IPaginationService pagination)
         {
             _movie = movie;
             _copy = copy;
             _mapper = mapper;
             _logger = logger;
+            _pagination = pagination;
         }
 
         // GET: /movies
-        public ActionResult Index(string q, string genre, int? page)
+        [AllowAnonymous]
+        public async Task<ActionResult> Index(string q, string genre, int? page)
         {
             try
             {
@@ -55,9 +57,9 @@ namespace VideoClub.Web.Areas.Movies.Controllers
                     movies = movies.Where(m => m.MovieGenres.Any(mg => mg.Genre == genreValue));
                 }
 
-                
+
                 ViewBag.Genres = new SelectList(Enum.GetNames(typeof(Genres)));
-                return View(GetPaginatedMovies(new PaginationDto(page, 5), movies));
+                return View(await GetPaginatedMovies(_pagination.GetMoviesPagination(page, 5), movies));
             }
             catch (Exception e)
             {
@@ -83,20 +85,12 @@ namespace VideoClub.Web.Areas.Movies.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Συμπληρώστε όλα τα στοιχεία!");
                 ViewBag.Genres = new MultiSelectList(Enum.GetValues(typeof(Genres)));
                 return View(model);
             }
 
             try
             {
-                if (model.CopiesNumber <= 0)
-                {
-                    ModelState.AddModelError("", "Δημιουργήστε τουλάχιστον μια κόπια!");
-                    ViewBag.Genres = new MultiSelectList(Enum.GetValues(typeof(Genres)));
-                    return View(model);
-                }
-
                 var movie = _mapper.Map<Movie>(model);
 
                 await _movie.AddMovie(movie, model.Genres, model.CopiesNumber);
@@ -137,9 +131,9 @@ namespace VideoClub.Web.Areas.Movies.Controllers
             }
         }
 
-        public PaginationModel<MovieViewModel> GetPaginatedMovies(PaginationDto pagination, IQueryable<Movie> movies)
+        private async Task<PaginationModel<MovieViewModel>> GetPaginatedMovies(PaginationDto pagination, IQueryable<Movie> movies)
         {
-            var moviesCount = movies.Count();
+            var moviesCount = await movies.CountAsync();
 
             var toSkip = (pagination.CurrentPage - 1) * pagination.PageSize;
 

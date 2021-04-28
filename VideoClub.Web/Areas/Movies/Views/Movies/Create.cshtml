@@ -11,7 +11,7 @@
     @Html.AntiForgeryToken()
     <fieldset>
         <fieldset class="form-group">
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.ValidationSummary("", new { @class = "text-danger" })
             <div class="form-group row-cols-4">
                 <label class="control-label">Τίτλος</label>
                 @Html.TextBoxFor(m => m.Title, null, new { id = "movieTitle", @class = "form-control" })

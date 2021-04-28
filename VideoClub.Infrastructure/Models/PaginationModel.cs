@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace VideoClub.Core.Models
+namespace VideoClub.Infrastructure.Models
 {
     public class PaginationModel<T>
     {

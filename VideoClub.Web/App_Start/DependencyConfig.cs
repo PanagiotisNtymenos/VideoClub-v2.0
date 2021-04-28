@@ -37,6 +37,7 @@ namespace VideoClub.Web.App_Start
             // ActionFilters
 
             // Services            
+            builder.RegisterType<PaginationService>().As<IPaginationService>().InstancePerRequest();
             builder.RegisterType<LoggingService>().As<ILoggingService>().InstancePerRequest();
             builder.RegisterType<MovieService>().As<IMovieService>().InstancePerRequest();
             builder.RegisterType<RentingService>().As<IRentingService>().InstancePerRequest();

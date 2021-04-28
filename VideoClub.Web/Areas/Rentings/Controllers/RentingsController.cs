@@ -1,6 +1,5 @@
 ﻿using PagedList;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -9,7 +8,6 @@ using VideoClub.Core.Interfaces;
 using System.Diagnostics;
 using VideoClub.Web.Areas.Rentings.Models;
 using AutoMapper;
-using Serilog;
 using VideoClub.Infrastructure.Services.Interfaces;
 
 namespace VideoClub.Web.Areas.Rentings.Controllers
@@ -92,7 +90,6 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Συμπληρώστε όλα τα απαραίτητα πεδία!");
                 model.Username = null; model.Title = null; model.MovieId = null;
                 return View(model);
             }

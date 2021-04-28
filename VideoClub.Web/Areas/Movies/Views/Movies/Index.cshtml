@@ -1,4 +1,4 @@
-﻿@model VideoClub.Core.Models.PaginationModel<VideoClub.Web.Areas.Movies.Models.MovieViewModel>
+﻿@model VideoClub.Infrastructure.Models.PaginationModel<VideoClub.Web.Areas.Movies.Models.MovieViewModel>
 @{
     ViewBag.Title = "Ταινίες";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,7 +7,7 @@
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm("", "movies", FormMethod.Get, new { @class = "form-inline my-2 my-lg-0" }))
+@using (Html.BeginForm("index", "movies", FormMethod.Get, new { @class = "form-inline my-2 my-lg-0" }))
 {
     <p style="width:100%">
         @Html.TextBox("q", ViewBag.currentQuery as string, new { @class = "form-control mr-sm-2" })
@@ -93,10 +93,24 @@
     Page @(Model.TotalItems < Model.PageNum ? 0 : Model.PageNum) of @Model.TotalPages
     <div style="padding:10px"></div>
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group mr-2" role="group" aria-label="First group">
+        @if (Model.TotalPages > 1)
+        {
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                @*<button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = 1, q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'"><<</button>*@
+                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = (Model.PageNum == 1 ? Model.PageNum : Model.PageNum - 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'"><</button>
+            </div>
+        }
+        <div class="btn-group mr-2" role="group" aria-label="Second group">
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
                 @:<button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = i, q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'">@i</button>
             }
         </div>
+        @if (Model.TotalPages > 1)
+        {
+            <div class="btn-group mr-2" role="group" aria-label="Third group">
+                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = (Model.PageNum == Model.TotalPages ? Model.TotalPages : Model.PageNum + 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'">></button>
+                @*<button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = Model.TotalPages, q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'">>></button>*@
+            </div>
+        }
     </div>
