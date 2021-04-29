@@ -21,6 +21,9 @@ namespace VideoClub.Web.Mappings.Profile
                 .ForMember(desk => desk.RentingNotes, opt => opt.MapFrom(src => src.RentNotes));
             CreateMap<Renting, RentingBindModel>()
                 .ForMember(desk => desk.MovieId, opt => opt.MapFrom(src => src.Copy.Movie.Id));
+            CreateMap<Renting, RentingViewModel>();
+            CreateMap<Renting, ReturnRentingBindModel>();
+            CreateMap<ReturnRentingBindModel, Renting>();
         }
     }
 }

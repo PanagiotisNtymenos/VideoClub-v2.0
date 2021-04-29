@@ -1,7 +1,7 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
 
-@model IPagedList<VideoClub.Core.Entities.Renting>
+@model IPagedList<VideoClub.Web.Areas.Rentings.Models.RentingViewModel>
 @{
     ViewBag.Title = "Ενεργές Κρατήσεις";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -46,16 +46,16 @@
                     @Html.ActionLink(item.User.UserName, "rentings", "customers", new { area = "customers", customer = item.User.UserName }, null)
                 </td>
                 <td style="text-align:center">
-                    @if (DateTime.Compare(item.ReturnDate, DateTime.Now) < 0)
+                    @if (DateTime.Compare(item.ScheduledReturnDate, DateTime.UtcNow) < 0)
                     {
                         <div style="color:red">
-                            @item.ReturnDate.ToString("dd/MM/yyyy")
+                            @item.ScheduledReturnDate.ToString("dd/MM/yyyy")
                         </div>
                     }
                     else
                     {
                         <div style="color:green">
-                            @item.ReturnDate.ToString("dd/MM/yyyy")
+                            @item.ScheduledReturnDate.ToString("dd/MM/yyyy")
                         </div>
                     }
 

@@ -17,6 +17,7 @@
             <th scope="col" style="white-space:nowrap">IUsername</th>
             <th scope="col" style="white-space:nowrap">Όνομα</th>
             <th scope="col" style="white-space:nowrap">Επώνυμο</th>
+            <th scope="col" style="white-space:nowrap; text-align:center;">Συνολικές Κρατήσεις</th>
             <th scope="col" style="white-space:nowrap; text-align:center;">Ενεργές Κρατήσεις</th>
             <th></th>
         </tr>
@@ -33,6 +34,18 @@
                 </td>
                 <td>
                     @Html.DisplayFor(m => item.LastName)
+                </td>
+                <td style="text-align:center">
+                    @if (item.Rentings.Count() == 0)
+                    {
+                        <div style="color:red">0</div>
+                    }
+                    else
+                    {
+                        <div class="text-secondary">
+                            @item.Rentings.Count()
+                        </div>
+                    }
                 </td>
                 <td style="text-align:center">
                     @if (item.Rentings.Where(r => r.IsActive).Count() == 0)

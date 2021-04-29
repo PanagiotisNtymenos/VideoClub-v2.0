@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PagedList;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,7 +44,9 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
 
                 var allRentings = await _rentingService.GetAllActiveRentings();
 
-                return View(allRentings.ToPagedList(PageNumber, PageSize));
+                var rentingViewModels = _mapper.Map<List<RentingViewModel>>(allRentings);
+
+                return View(rentingViewModels.ToPagedList(PageNumber, PageSize));
             }
             catch (Exception e)
             {
@@ -71,7 +74,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                     var user = _userService.GetUserByUserName(customer);
                     if (user != null) username = user.UserName;
                 }
-                // TODO mapping
+                // TODO mapping(?)
                 var rentingBindModel = new RentingBindModel(username, title, movieId);
 
                 return View(rentingBindModel);
@@ -113,6 +116,8 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 }
 
                 var renting = _mapper.Map<Renting>(model);
+                renting.RentingDate = DateTime.UtcNow;
+                renting.ScheduledReturnDate = DateTime.UtcNow.AddDays(7);
                 renting.ReturnDate = DateTime.UtcNow.AddDays(7);
                 renting.IsActive = true;
 
@@ -141,9 +146,10 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             try
             {
                 var renting = await _rentingService.GetRentingById(rentingId);
-
+                var returnRentingBindModel = _mapper.Map<ReturnRentingBindModel>(renting);
                 if (renting.IsActive)
-                    return View(renting);
+                    return View(returnRentingBindModel);
+
             }
             catch (Exception e)
             {
@@ -156,14 +162,18 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
         // POST: /rentings/return
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Return(Renting model)// TODO BindModel
+        public async Task<ActionResult> Return(ReturnRentingBindModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
             try
             {
-                var renting = await _rentingService.GetRentingById(model.Id);
+                var renting = _mapper.Map<Renting>(model);
                 renting.IsActive = false;
                 renting.ReturnNotes = model.ReturnNotes;
-                renting.ReturnDate = DateTime.Now;
+                renting.ReturnDate = DateTime.UtcNow;
                 renting.Copy.IsAvailable = true;
 
                 await _rentingService.ReturnRenting(renting);

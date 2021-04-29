@@ -1,24 +1,29 @@
-﻿using PagedList;
+﻿using AutoMapper;
+using PagedList;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using VideoClub.Core.Interfaces;
 using VideoClub.Infrastructure.Services.Interfaces;
+using VideoClub.Web.Areas.Rentings.Models;
 
 namespace VideoClub.Web.Areas.Customers.Controllers
 {
     [Authorize(Roles = "ADMIN")]
     public class CustomersController : Controller
     {
+        private readonly IMapper _mapper;
         private readonly ILoggingService _logger;
         private readonly IRentingService _rentingService;
         private readonly IUserService _userService;
 
-        public CustomersController(IRentingService rentingService, IUserService userService, ILoggingService logger)
+        public CustomersController(IRentingService rentingService, IUserService userService, ILoggingService logger, IMapper mapper)
         {
             _rentingService = rentingService;
             _userService = userService;
             _logger = logger;
+            _mapper = mapper;
         }
 
         // GET: /customers
@@ -55,7 +60,8 @@ namespace VideoClub.Web.Areas.Customers.Controllers
                     ViewBag.Customer = customer;
 
                     var rentings = await _rentingService.GetUserRentings(customer);
-                    return View(rentings.ToPagedList(PageNumber, PageSize));
+                    var rentingsViewModel = _mapper.Map<List<RentingViewModel>>(rentings);
+                    return View(rentingsViewModel.ToPagedList(PageNumber, PageSize));
                 }
                 else
                 {
