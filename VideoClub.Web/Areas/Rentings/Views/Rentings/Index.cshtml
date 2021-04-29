@@ -16,11 +16,13 @@
     {
         <thead>
             <tr>
+                <th style="white-space:nowrap"></th>
                 <th style="white-space:nowrap">Τίτλος</th>
                 <th style="white-space:nowrap">ID Κόπιας</th>
                 <th style="white-space:nowrap">Πελάτης</th>
-                <th style="white-space:nowrap">Ημερομηνία Επιστροφής</th>
+                <th style="white-space:nowrap; text-align:center;">Ημερομηνία Επ.</th>
                 <th style="white-space:nowrap">Σχόλια</th>
+                <th></th>
                 <th></th>
             </tr>
         </thead>
@@ -31,6 +33,10 @@
 
             <tr class="table-default">
                 <td>
+                    <img id="@item.Id" src="~/Content/images/loading.gif" alt="Artwork" style="height:50px;width:auto" />
+                    <script>callOMDbAPI('@item.Id','@item.Copy.Movie.Title')</script>
+                </td>
+                <td>
                     @Html.DisplayFor(m => item.Copy.Movie.Title)
                 </td>
                 <td>
@@ -39,7 +45,7 @@
                 <td>
                     @Html.ActionLink(item.User.UserName, "rentings", "customers", new { area = "customers", customer = item.User.UserName }, null)
                 </td>
-                <td>
+                <td style="text-align:center">
                     @if (DateTime.Compare(item.ReturnDate, DateTime.Now) < 0)
                     {
                         <div style="color:red">
@@ -58,7 +64,10 @@
                     @Html.DisplayFor(m => item.RentingNotes)
                 </td>
                 <td>
-                    <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("return", "rentings", new { rentingId = item.Id })'">>|</button>
+                    <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("return", "rentings", new { rentingId = item.Id })'"><</button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("return", "rentings", new { rentingId = item.Id })'">x</button>
                 </td>
             </tr>
 

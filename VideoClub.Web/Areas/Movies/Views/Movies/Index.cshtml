@@ -4,7 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 <h2>@ViewBag.Title</h2>
 
 @using (Html.BeginForm("index", "movies", FormMethod.Get, new { @class = "form-inline my-2 my-lg-0" }))
@@ -24,6 +23,7 @@
     <thead>
         <tr>
             <th scope="col" style="white-space:nowrap">ID</th>
+            <th scope="col" style="white-space:nowrap"></th>
             <th scope="col" style="white-space:nowrap">Τίτλος</th>
             <th scope="col" style="white-space:nowrap">Περιγραφή</th>
             <th scope="col" style="white-space:nowrap">Είδος</th>
@@ -39,7 +39,11 @@
                     @Html.DisplayFor(m => item.Id)
                 </td>
                 <td>
-                    @Html.DisplayFor(m => item.Title)
+                    <img id="@item.Id" src="~/Content/images/loading.gif" alt="Artwork" style="height:150px;width:auto" />
+                    <script>callOMDbAPI('@item.Id','@item.Title')</script>
+                </td>
+                <td>
+                    <strong>@Html.DisplayFor(m => item.Title)</strong>
                 </td>
                 <td>
                     @Html.DisplayFor(m => item.Summary)

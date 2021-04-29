@@ -22,17 +22,26 @@ namespace VideoClub.Common.Services
         // Get
         public async Task<List<Renting>> GetAllActiveRentings()
         {
-            return await _context.Rentings.Where(r => r.IsActive).Include(r => r.Copy).Include(r => r.User).ToListAsync();
+            return await _context.Rentings
+                .Where(r => r.IsActive)
+                .Include(r => r.Copy)
+                .Include(r => r.User)
+                .ToListAsync();
         }
 
         public async Task<Renting> GetRentingById(int rentingId)
         {
-            return await _context.Rentings.Where(r => r.Id == rentingId).Include(c => c.Copy).FirstAsync();
+            return await _context.Rentings
+                .Where(r => r.Id == rentingId)
+                .Include(c => c.Copy)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<List<Renting>> GetUserRentings(string username)
         {
-            return await _context.Rentings.Where(r => r.User.UserName == username).ToListAsync();
+            return await _context.Rentings
+                .Where(r => r.User.UserName == username)
+                .ToListAsync();
         }
 
 

@@ -1,14 +1,14 @@
-﻿using PagedList;
+﻿using AutoMapper;
+using PagedList;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using VideoClub.Core.Entities;
 using VideoClub.Core.Interfaces;
-using System.Diagnostics;
-using VideoClub.Web.Areas.Rentings.Models;
-using AutoMapper;
 using VideoClub.Infrastructure.Services.Interfaces;
+using VideoClub.Web.Areas.Rentings.Models;
 
 namespace VideoClub.Web.Areas.Rentings.Controllers
 {
@@ -71,8 +71,8 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                     var user = _userService.GetUserByUserName(customer);
                     if (user != null) username = user.UserName;
                 }
-
-                RentingBindModel rentingBindModel = new RentingBindModel(username, title, movieId);
+                // TODO mapping
+                var rentingBindModel = new RentingBindModel(username, title, movieId);
 
                 return View(rentingBindModel);
             }
@@ -113,7 +113,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 }
 
                 var renting = _mapper.Map<Renting>(model);
-                renting.ReturnDate = DateTime.Now.AddDays(7);
+                renting.ReturnDate = DateTime.UtcNow.AddDays(7);
                 renting.IsActive = true;
 
                 await _rentingService.AddRenting(renting, user, copy);
@@ -156,7 +156,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
         // POST: /rentings/return
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Return(Renting model)
+        public async Task<ActionResult> Return(Renting model)// TODO BindModel
         {
             try
             {

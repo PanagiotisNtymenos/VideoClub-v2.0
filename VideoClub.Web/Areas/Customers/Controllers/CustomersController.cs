@@ -1,9 +1,7 @@
 ﻿using PagedList;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using VideoClub.Core.Entities;
 using VideoClub.Core.Interfaces;
 using VideoClub.Infrastructure.Services.Interfaces;
 

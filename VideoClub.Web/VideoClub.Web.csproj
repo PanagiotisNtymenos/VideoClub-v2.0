@@ -248,6 +248,8 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\flatly.bootstrap.css" />
     <Content Include="Content\flatly.bootstrap.min.css" />
+    <Content Include="Content\images\loading.gif" />
+    <Content Include="Content\images\white.jpg" />
     <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\jquery-ui.min.css" />
     <Content Include="Content\jquery-ui.structure.css" />
@@ -292,6 +294,7 @@
     <Content Include="Areas\Customers\Views\web.config" />
     <Content Include="Areas\Customers\Views\Customers\Rentings.cshtml" />
     <Content Include="Areas\Customers\Views\Customers\Index.cshtml" />
+    <Content Include="OMDbAPIKEY.json" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
@@ -306,6 +309,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\omdb-api.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VideoClub.Core.Enumerations
+﻿namespace VideoClub.Core.Enumerations
 {
     public enum Genres
     {
@@ -22,6 +15,7 @@ namespace VideoClub.Core.Enumerations
         SciFi,
         Παιδικά,
         Έγκλημα,
-        Βιογραφία
+        Βιογραφία,
+        Musical
     }
 }
