@@ -84,9 +84,27 @@
                     $('#genresDropDown').selectize({
                         maxItems: 5
                     });
-
                 });
 
+
+                function returnRentingNow(id) {
+                    var params =
+                    {
+                        'rentingId': id
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("returnNow", "rentings", new { area = "rentings"})',
+                        data: JSON.stringify(params),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (response) {
+                            window.location.href = response.redirectToUrl;
+                            $("#return-alert").fadeTo(2000, 500).slideUp(500, function () {
+                                $("#return-alert").slideUp(500);
+                            });
+                        }
+                    })
+                }
     </script>
 </body>
 </html>

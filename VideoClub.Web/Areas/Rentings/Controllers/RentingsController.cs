@@ -161,7 +161,6 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
 
         // POST: /rentings/return
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Return(ReturnRentingBindModel model)
         {
             if (!ModelState.IsValid)
@@ -186,6 +185,32 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             }
 
             return RedirectToAction("index", "rentings");
+        }
+
+        // POST: /rentings/returnNow
+        [HttpPost]
+        public async Task<JsonResult> ReturnNow(int rentingId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { error = "Wrong Id!" });
+            }
+            try
+            {
+                var renting = await _rentingService.GetRentingById(rentingId);
+                renting.IsActive = false;
+                renting.ReturnDate = DateTime.UtcNow;
+                renting.Copy.IsAvailable = true;
+
+                await _rentingService.ReturnRenting(renting);
+                _logger.Writer.Information("Renting: {RentingID} with User: {Username}, Copy: {CopyID} and Movie: {Title} was returned.", renting.Id, renting.User.UserName, renting.Copy.Id, renting.Copy.Movie.Title);
+            }
+            catch (Exception e)
+            {
+                _logger.Writer.Fatal(e, "Return didn't complete.");
+            }
+
+            return Json(new { redirectToUrl = Url.Action("index", "rentings") });
         }
 
         public async Task<JsonResult> MoviesAutoComplete(string term)

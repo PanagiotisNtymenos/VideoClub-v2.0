@@ -11,6 +11,13 @@ namespace VideoClub.Web.Areas.Rentings.Models
     {
         public ReturnRentingBindModel() { }
 
+        public ReturnRentingBindModel(int id, User user, Copy copy)
+        {
+            Id = id;
+            User = user;
+            Copy = copy;
+        }
+
         [Required]
         public int Id { get; set; }
 

@@ -83,7 +83,7 @@
                         <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("return", "rentings", new { area="rentings", rentingId = item.Id })'"><</button>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("return", "rentings", new { area="rentings", rentingId = item.Id })'">x</button>
+                        <button id="returnBtn" type="button" class="btn btn-danger" onclick="returnRentingNow('@item.Id')">x</button>
                     </td>
                 }
             </tr>

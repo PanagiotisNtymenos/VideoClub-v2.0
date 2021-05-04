@@ -42,7 +42,7 @@ namespace VideoClub.Common.Services
 
         public IQueryable<Movie> GetAllMoviesAsQueryable()
         {
-            return _context.Movies.Include(m => m.Copies).Include(m => m.MovieGenres).OrderBy(m => m.Id).AsQueryable();
+            return _context.Movies.Include(m => m.Copies).Include(m => m.MovieGenres).OrderBy(m => m.Title).AsQueryable();
         }
 
         public async Task<List<Movie>> GetAllMovies()

@@ -8,7 +8,6 @@
 
 @using (Html.BeginForm("return", "rentings", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
-    @Html.AntiForgeryToken()
     <fieldset>
         <fieldset class="form-group">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
