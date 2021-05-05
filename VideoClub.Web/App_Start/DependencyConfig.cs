@@ -36,7 +36,8 @@ namespace VideoClub.Web.App_Start
 
             // ActionFilters
 
-            // Services            
+            // Services
+            builder.RegisterType<OMDbAPIService>().As<IOMDbAPIService>().InstancePerRequest();
             builder.RegisterType<PaginationService>().As<IPaginationService>().InstancePerRequest();
             builder.RegisterType<LoggingService>().As<ILoggingService>().InstancePerRequest();
             builder.RegisterType<MovieService>().As<IMovieService>().InstancePerRequest();

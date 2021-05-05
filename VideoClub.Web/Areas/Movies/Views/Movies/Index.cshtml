@@ -14,7 +14,7 @@
         <input class="btn btn-secondary" type="submit" value="Search" />
         @if (User.IsInRole("ADMIN"))
         {
-            <button style="float:right" type="button" class="btn btn-success mr-sm-2" onclick="location.href='@Url.Action("create", "movies", new { area = "movies" }, null)'">+</button>
+            @Html.ActionLink("+", "create", "movies", null, new { style = "float:right", @class = "btn btn-success mr-sm-2" })
         }
     </p>
 
@@ -39,8 +39,7 @@
                     @Html.DisplayFor(m => item.Id)
                 </td>
                 <td>
-                    <img id="@item.Id" src="~/Content/images/loading.gif" alt="Artwork" style="height:150px;width:auto" />
-                    <script>callOMDbAPI('@item.Id','@item.Title')</script>
+                    <img src=@item.Poster alt="Artwork" style="height:150px;width:auto" />
                 </td>
                 <td>
                     <strong>@Html.DisplayFor(m => item.Title)</strong>
@@ -84,7 +83,11 @@
                         }
                         else
                         {
-                            <button type="button" class="btn btn-dark" onclick="location.href='@Url.Action("create", "rentings", new { Area="rentings", movieId = item.Id })'">></button>
+                            using (Html.BeginForm("create", "rentings", FormMethod.Get, new { Area = "rentings", movieId = item.Id }))
+                            {
+                                @Html.Hidden("movieId", item.Id)
+                                <button type="submit" class="btn btn-dark">></button>
+                            }
                         }
                     }
                 </td>
@@ -99,22 +102,20 @@
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
         @if (Model.TotalPages > 1)
         {
-            <div class="btn-group mr-2" role="group" aria-label="First group">
-                @*<button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = 1, q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'"><<</button>*@
-                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = (Model.PageNum == 1 ? Model.PageNum : Model.PageNum - 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'"><</button>
+            <div style="margin-right:1px" class="btn-group" role="group" aria-label="First group">
+                @Html.ActionLink("<", "index", "movies", new { page = (Model.PageNum == 1 ? Model.PageNum : Model.PageNum - 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre }, new { @class = "btn btn-secondary" })
             </div>
         }
-        <div class="btn-group mr-2" role="group" aria-label="Second group">
+        <div style="margin:0" class="btn-group" role="group" aria-label="Second group">
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
-                @:<button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = i, q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'">@i</button>
+                @Html.ActionLink(i.ToString(), "index", "movies", new { page = i, q = ViewBag.currentQuery, genre = ViewBag.currentGenre }, new { @class = "btn btn-secondary" })
             }
         </div>
         @if (Model.TotalPages > 1)
         {
-            <div class="btn-group mr-2" role="group" aria-label="Third group">
-                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = (Model.PageNum == Model.TotalPages ? Model.TotalPages : Model.PageNum + 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'">></button>
-                @*<button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("", new { page = Model.TotalPages, q = ViewBag.currentQuery, genre = ViewBag.currentGenre })'">>></button>*@
+            <div style="margin-left:1px" class="btn-group" role="group" aria-label="Third group">
+                @Html.ActionLink(">", "index", "movies", new { page = (Model.PageNum == Model.TotalPages ? Model.TotalPages : Model.PageNum + 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre }, new { @class = "btn btn-secondary" })
             </div>
         }
     </div>

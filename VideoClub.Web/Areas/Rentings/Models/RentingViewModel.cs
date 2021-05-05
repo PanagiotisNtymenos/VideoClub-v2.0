@@ -8,6 +8,8 @@ namespace VideoClub.Web.Areas.Rentings.Models
     {
         public int Id { get; set; }
 
+        public string Poster { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:d/MM/yyyy}")]
         public DateTime ScheduledReturnDate { get; set; }
 

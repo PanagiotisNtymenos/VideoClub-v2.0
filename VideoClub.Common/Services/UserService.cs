@@ -19,17 +19,25 @@ namespace VideoClub.Common.Services
 
         public User GetUserByUserName(string username)
         {
-            return _context.Users.Where(u => u.UserName == username).FirstOrDefault();
+            return _context.Users
+                .Where(u => u.UserName == username)
+                .FirstOrDefault();
         }
 
         public async Task<List<string>> GetUserNameByQuery(string q)
         {
-            return await _context.Users.Where(m => m.UserName.StartsWith(q)).Select(m => m.UserName).ToListAsync();
+            return await _context.Users
+                .Where(m => m.UserName.StartsWith(q))
+                .Select(m => m.UserName)
+                .ToListAsync();
         }
 
         public async Task<List<User>> GetAllCustomers()
         {
-            return await _context.Users.Where(u => u.Roles.Any(r => r.RoleId == "2")).Include(r => r.Rentings).ToListAsync();
+            return await _context.Users
+                .Where(u => u.Roles.Any(r => r.RoleId == "2"))
+                .Include(r => r.Rentings)
+                .ToListAsync();
         }
     }
 }

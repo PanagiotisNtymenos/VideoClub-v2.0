@@ -23,12 +23,16 @@ namespace VideoClub.Common.Services
         // Get
         public async Task<List<Copy>> GetCopiesByTitleQuery(string q)
         {
-            return await _context.Copies.Where(c => c.Movie.Title.Contains(q)).ToListAsync();
+            return await _context.Copies
+                .Where(c => c.Movie.Title.Contains(q))
+                .ToListAsync();
         }
 
         public async Task<Copy> GetAvailableCopyById(int movieId)
         {
-            return await _context.Copies.Where(c => c.Movie.Id == movieId && c.IsAvailable).FirstAsync();
+            return await _context.Copies
+                .Where(c => c.Movie.Id == movieId && c.IsAvailable)
+                .FirstOrDefaultAsync();
         }
 
     }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using VideoClub.Core.Entities;
 using VideoClub.Core.Interfaces;
@@ -37,10 +35,11 @@ namespace VideoClub.Common.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<Renting>> GetUserRentings(string username)
+        public async Task<List<Renting>> GetAllUserRentings(string username)
         {
             return await _context.Rentings
                 .Where(r => r.User.UserName == username)
+                .OrderBy(r => !r.IsActive)
                 .ToListAsync();
         }
 

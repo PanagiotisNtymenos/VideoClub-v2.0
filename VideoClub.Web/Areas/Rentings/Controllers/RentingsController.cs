@@ -16,6 +16,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
     [Authorize(Roles = "ADMIN")]
     public class RentingsController : Controller
     {
+        private readonly IOMDbAPIService _OMDbAPI;
         private readonly ILoggingService _logger;
         private readonly IMapper _mapper;
         private readonly IRentingService _rentingService;
@@ -23,7 +24,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
         private readonly IUserService _userService;
         private readonly IMovieService _movieService;
 
-        public RentingsController(IRentingService rentingService, ICopyService copyService, IUserService userService, IMovieService movieService, IMapper mapper, ILoggingService logger)
+        public RentingsController(IRentingService rentingService, ICopyService copyService, IUserService userService, IMovieService movieService, IMapper mapper, ILoggingService logger, IOMDbAPIService OMDbAPI)
         {
             _rentingService = rentingService;
             _copyService = copyService;
@@ -31,6 +32,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             _movieService = movieService;
             _mapper = mapper;
             _logger = logger;
+            _OMDbAPI = OMDbAPI;
         }
 
         // GET: /rentings
@@ -45,6 +47,11 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 var allRentings = await _rentingService.GetAllActiveRentings();
 
                 var rentingViewModels = _mapper.Map<List<RentingViewModel>>(allRentings);
+
+                foreach (RentingViewModel renting in rentingViewModels)
+                {
+                    renting.Poster = await _OMDbAPI.GetMovieArtworkByTitle(renting.Copy.Movie.Title);
+                }
 
                 return View(rentingViewModels.ToPagedList(PageNumber, PageSize));
             }
@@ -213,6 +220,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             return Json(new { redirectToUrl = Url.Action("index", "rentings") });
         }
 
+        // GET: /rentings/MoviesAutoComplete
         public async Task<JsonResult> MoviesAutoComplete(string term)
         {
             var movies = await _movieService.GetAvailableMoviesByQuery(term);
@@ -239,6 +247,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             }
         }
 
+        // GET: /rentings/UsersAutoComplete
         public async Task<JsonResult> UsersAutoComplete(string term)
         {
             var users = await _userService.GetUserNameByQuery(term);

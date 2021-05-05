@@ -8,12 +8,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - @ViewData["ApplicationName"]</title>
-    @*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.bootstrap4.css">*@
-    @*<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">*@
     <link rel="icon" href="~/Content/icons/movies.png">
-    <link rel="stylesheet" type="text/css" href="~/Content/selectize.css">
-    @Scripts.Render("~/bundles/jquery")
-    <script src="~/Scripts/omdb-api.js"></script>
+    @Styles.Render("~/Content/jquery-ui")
+    @Styles.Render("~/Content/selectize")
     @Styles.Render("~/Content/css")
 
 </head>
@@ -27,7 +24,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 @Html.Partial("_AdminMenuPartial")
-
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
@@ -41,71 +37,12 @@
         </footer>
     </div>
 
+    @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jquery-ui")
+    @Scripts.Render("~/bundles/selectize")
+    @Scripts.Render("~/bundles/scripts")
     @RenderSection("scripts", required: false)
-    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
-    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
-    <link href="~/Content/jquery-ui.structure.css" rel="stylesheet" />
-    <link href="~/Content/jquery-ui.structure.min.css" rel="stylesheet" />
-    <link href="~/Content/jquery-ui.theme.css" rel="stylesheet" />
-    <link href="~/Content/jquery-ui.theme.min.css" rel="stylesheet" />
-
-    <script src="~/Scripts/jquery.js"></script>
-    <script src="~/Scripts/jquery-ui.min.js"></script>
-    <script src="~/Scripts/jquery-ui.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/js/standalone/selectize.js"></script>
-    <script type="text/javascript">
-
-                $(function () {
-                    $("#movieSearch").autocomplete({
-                        source: '@Url.Action("MoviesAutoComplete", "rentings")',
-                        select: function (event, ui) {
-                            $('#movieId').val(ui.item.movieId);
-                        }
-                    });
-                });
-
-                $(function () {
-                    $("#movieTitle").autocomplete({
-                        source: '@Url.Action("MoviesAutoComplete", "movies")',
-                        select: function (event, ui) {
-                            $('#movieId').val(ui.item.movieId);
-                        }
-                    });
-                });
-
-                $(function () {
-                    $("#userSearch").autocomplete({
-                        source: '@Url.Action("UsersAutoComplete", "rentings")'
-                    });
-                });
-
-                $(document).ready(function () {
-                    $('#genresDropDown').selectize({
-                        maxItems: 5
-                    });
-                });
-
-
-                function returnRentingNow(id) {
-                    var params =
-                    {
-                        'rentingId': id
-                    };
-                    $.ajax({
-                        type: 'POST',
-                        url: '@Url.Action("returnNow", "rentings", new { area = "rentings"})',
-                        data: JSON.stringify(params),
-                        contentType: 'application/json; charset=utf-8',
-                        success: function (response) {
-                            window.location.href = response.redirectToUrl;
-                            $("#return-alert").fadeTo(2000, 500).slideUp(500, function () {
-                                $("#return-alert").slideUp(500);
-                            });
-                        }
-                    })
-                }
-    </script>
 </body>
 </html>
 

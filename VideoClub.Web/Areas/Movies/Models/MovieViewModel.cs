@@ -10,6 +10,8 @@ namespace VideoClub.Web.Areas.Movies.Models
 
         public int Id { get; set; }
 
+        public string Poster { get; set; }
+
         public string Title { get; set; }
 
         public string Summary { get; set; }

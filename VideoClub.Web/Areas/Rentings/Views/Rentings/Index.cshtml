@@ -9,74 +9,77 @@
 
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 <h2>@ViewBag.Title</h2>
-
-<table class="table">
-    @if (Model.Count() > 0)
-    {
-        <thead>
-            <tr>
-                <th style="white-space:nowrap"></th>
-                <th style="white-space:nowrap">Τίτλος</th>
-                <th style="white-space:nowrap">ID Κόπιας</th>
-                <th style="white-space:nowrap">Πελάτης</th>
-                <th style="white-space:nowrap; text-align:center;">Ημερομηνία Επ.</th>
-                <th style="white-space:nowrap">Σχόλια</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-    }
-    <tbody>
-        @foreach (var item in Model)
+<div>
+    <table class="table">
+        @if (Model.Count() > 0)
         {
-
-            <tr class="table-default">
-                <td>
-                    <img id="@item.Id" src="~/Content/images/loading.gif" alt="Artwork" style="height:50px;width:auto" />
-                    <script>callOMDbAPI('@item.Id','@item.Copy.Movie.Title')</script>
-                </td>
-                <td>
-                    @Html.DisplayFor(m => item.Copy.Movie.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(m => item.Copy.Id)
-                </td>
-                <td>
-                    @Html.ActionLink(item.User.UserName, "rentings", "customers", new { area = "customers", customer = item.User.UserName }, null)
-                </td>
-                <td style="text-align:center">
-                    @if (DateTime.Compare(item.ScheduledReturnDate, DateTime.UtcNow) < 0)
-                    {
-                        <div style="color:red">
-                            @item.ScheduledReturnDate.ToString("dd/MM/yyyy")
-                        </div>
-                    }
-                    else
-                    {
-                        <div style="color:green">
-                            @item.ScheduledReturnDate.ToString("dd/MM/yyyy")
-                        </div>
-                    }
-
-                </td>
-                <td>
-                    @Html.DisplayFor(m => item.RentingNotes)
-                </td>
-                <td>
-                    <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("return", "rentings", new { rentingId = item.Id })'"><</button>
-                </td>
-                <td>
-                    <button id="returnBtn" type="button" class="btn btn-danger" onclick="returnRentingNow('@item.Id')">x</button>
-                </td>
-            </tr>
-
+            <thead>
+                <tr>
+                    <th style="white-space:nowrap"></th>
+                    <th style="white-space:nowrap">Τίτλος</th>
+                    <th style="white-space:nowrap">ID Κόπιας</th>
+                    <th style="white-space:nowrap">Πελάτης</th>
+                    <th style="white-space:nowrap; text-align:center;">Ημερομηνία Επ.</th>
+                    <th style="white-space:nowrap">Σχόλια</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
         }
-    </tbody>
-</table>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                <tr class="table-default">
+                    <td>
+                        <img src=@item.Poster style="height:50px;width:auto" />
+                        @*<img id="@item.Id" src="~/Content/images/loading.gif" alt="Artwork" style="height:50px;width:auto" />
+                            <script>callOMDbAPI('@item.Id','@item.Copy.Movie.Title')</script>*@
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.Copy.Movie.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.Copy.Id)
+                    </td>
+                    <td>
+                        @Html.ActionLink(item.User.UserName, "rentings", "customers", new { area = "customers", customer = item.User.UserName }, null)
+                    </td>
+                    <td style="text-align:center">
+                        @if (DateTime.Compare(item.ScheduledReturnDate, DateTime.UtcNow) < 0)
+                        {
+                            <div style="color:red">
+                                @item.ScheduledReturnDate.ToString("dd/MM/yyyy")
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="color:green">
+                                @item.ScheduledReturnDate.ToString("dd/MM/yyyy")
+                            </div>
+                        }
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.RentingNotes)
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("return", "rentings", new { rentingId = item.Id })'"><</button>
+                    </td>
+                    <td>
+                        <button id="returnBtn" type="button" class="btn btn-danger btn-return-renting" data-rentingId="@item.Id">x</button>
+                        @*<button id="returnBtn" type="button" class="btn btn-danger returnBtn">x</button>*@
+
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>
 
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("", new { page }))
-
 

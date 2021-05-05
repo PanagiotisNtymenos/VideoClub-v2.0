@@ -13,17 +13,19 @@ namespace VideoClub.Web.Areas.Customers.Controllers
     [Authorize(Roles = "ADMIN")]
     public class CustomersController : Controller
     {
+        private readonly IOMDbAPIService _OMDbAPI;
         private readonly IMapper _mapper;
         private readonly ILoggingService _logger;
         private readonly IRentingService _rentingService;
         private readonly IUserService _userService;
 
-        public CustomersController(IRentingService rentingService, IUserService userService, ILoggingService logger, IMapper mapper)
+        public CustomersController(IRentingService rentingService, IUserService userService, ILoggingService logger, IMapper mapper, IOMDbAPIService OMDbAPI)
         {
             _rentingService = rentingService;
             _userService = userService;
             _logger = logger;
             _mapper = mapper;
+            _OMDbAPI = OMDbAPI;
         }
 
         // GET: /customers
@@ -59,9 +61,15 @@ namespace VideoClub.Web.Areas.Customers.Controllers
 
                     ViewBag.Customer = customer;
 
-                    var rentings = await _rentingService.GetUserRentings(customer);
-                    var rentingsViewModel = _mapper.Map<List<RentingViewModel>>(rentings);
-                    return View(rentingsViewModel.ToPagedList(PageNumber, PageSize));
+                    var rentings = await _rentingService.GetAllUserRentings(customer);
+                    var rentingViewModels = _mapper.Map<List<RentingViewModel>>(rentings);
+
+                    foreach (RentingViewModel renting in rentingViewModels)
+                    {
+                        renting.Poster = await _OMDbAPI.GetMovieArtworkByTitle(renting.Copy.Movie.Title);
+                    }
+
+                    return View(rentingViewModels.ToPagedList(PageNumber, PageSize));
                 }
                 else
                 {

@@ -22,14 +22,16 @@ namespace VideoClub.Web.Areas.Movies.Controllers
         private readonly IMapper _mapper;
         private readonly IMovieService _movie;
         private readonly ICopyService _copy;
+        private readonly IOMDbAPIService _OMDbAPI;
 
-        public MoviesController(IMovieService movie, ICopyService copy, IMapper mapper, ILoggingService logger, IPaginationService pagination)
+        public MoviesController(IMovieService movie, ICopyService copy, IMapper mapper, ILoggingService logger, IPaginationService pagination, IOMDbAPIService OMDbAPI)
         {
             _movie = movie;
             _copy = copy;
             _mapper = mapper;
             _logger = logger;
             _pagination = pagination;
+            _OMDbAPI = OMDbAPI;
         }
 
         // GET: /movies
@@ -145,6 +147,7 @@ namespace VideoClub.Web.Areas.Movies.Controllers
             foreach (var movie in movieViewModels)
             {
                 movie.Genres = Movie.ConvertToGenres(movie.MovieGenres);
+                movie.Poster = await _OMDbAPI.GetMovieArtworkByTitle(movie.Title);
             }
 
             return new PaginationModel<MovieViewModel>(movieViewModels, pagination.CurrentPage, pagination.PageSize, moviesCount);

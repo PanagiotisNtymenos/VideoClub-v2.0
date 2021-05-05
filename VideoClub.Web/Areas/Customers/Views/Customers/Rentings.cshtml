@@ -33,8 +33,7 @@
 
             <tr class="table-default">
                 <td>
-                    <img id="@item.Id" src="~/Content/images/loading.gif" alt="Artwork" style="height:50px;width:auto" />
-                    <script>callOMDbAPI('@item.Id','@item.Copy.Movie.Title')</script>
+                    <img src=@item.Poster alt="Artwork" style="height:50px;width:auto" />
                 </td>
                 <td>
                     @Html.DisplayFor(m => item.Copy.Movie.Title)
@@ -60,7 +59,7 @@
                 <td style="text-align:center">
                     @if (!item.IsActive)
                     {
-                        <div style="color:red">
+                        <div class="text-muted">
                             Μη Ενεργή
                         </div>
                     }
@@ -80,10 +79,10 @@
                 @if (item.IsActive)
                 {
                     <td>
-                        <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("return", "rentings", new { area="rentings", rentingId = item.Id })'"><</button>
+                        @Html.ActionLink("<", "return", "rentings", new { area = "rentings", rentingId = item.Id }, new { style = "float:right", @class = "btn btn-warning" })
                     </td>
                     <td>
-                        <button id="returnBtn" type="button" class="btn btn-danger" onclick="returnRentingNow('@item.Id')">x</button>
+                        <button id="returnBtn" type="button" class="btn btn-danger btn-return-renting" data-rentingId="@item.Id">x</button>
                     </td>
                 }
             </tr>
@@ -95,5 +94,5 @@
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-@Html.PagedListPager(Model, page => Url.Action("rentings", new { page, customer = ViewBag.Customer }))
+@Html.PagedListPager(Model, page => Url.Action("rentings", new { customer = ViewBag.Customer, page }))
 

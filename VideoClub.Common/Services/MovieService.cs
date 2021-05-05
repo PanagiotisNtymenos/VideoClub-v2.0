@@ -22,32 +22,55 @@ namespace VideoClub.Common.Services
         // Get
         public async Task<Movie> GetMovieById(int Id)
         {
-            return await _context.Movies.Where(m => m.Id == Id).Include(m => m.Copies).Include(m => m.MovieGenres).FirstAsync();
+            return await _context.Movies
+                .Where(m => m.Id == Id)
+                .Include(m => m.Copies)
+                .Include(m => m.MovieGenres)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<List<Movie>> GetMoviesByQuery(string q)
         {
-            return await _context.Movies.Where(m => m.Title.Contains(q)).Include(m => m.Copies).Include(m => m.MovieGenres).ToListAsync();
+            return await _context.Movies
+                .Where(m => m.Title.Contains(q))
+                .Include(m => m.Copies)
+                .Include(m => m.MovieGenres)
+                .ToListAsync();
         }
 
         public async Task<List<Movie>> GetAvailableMoviesByQuery(string q)
         {
-            return await _context.Copies.Where(c => c.IsAvailable && c.Movie.Title.Contains(q)).Select(m => m.Movie).Distinct().ToListAsync();
+            return await _context.Copies
+                .Where(c => c.IsAvailable && c.Movie.Title.Contains(q))
+                .Select(m => m.Movie)
+                .Distinct()
+                .ToListAsync();
         }
 
         public async Task<List<Movie>> GetAllAvailableMovies()
         {
-            return await _context.Movies.Include(i => i.Copies.Where(c => c.IsAvailable)).Include(i => i.MovieGenres).ToListAsync();
+            return await _context.Movies
+                .Include(i => i.Copies.Where(c => c.IsAvailable))
+                .Include(i => i.MovieGenres)
+                .ToListAsync();
         }
 
         public IQueryable<Movie> GetAllMoviesAsQueryable()
         {
-            return _context.Movies.Include(m => m.Copies).Include(m => m.MovieGenres).OrderBy(m => m.Title).AsQueryable();
+            return _context.Movies
+                .Include(m => m.Copies)
+                .Include(m => m.MovieGenres)
+                .OrderBy(m => m.Title)
+                .AsQueryable();
         }
 
         public async Task<List<Movie>> GetAllMovies()
         {
-            return await _context.Movies.Include(m => m.Copies).Include(m => m.MovieGenres).OrderBy(m => m.Id).ToListAsync();
+            return await _context.Movies
+                .Include(m => m.Copies)
+                .Include(m => m.MovieGenres)
+                .OrderBy(m => m.Id)
+                .ToListAsync();
         }
 
         // Add
