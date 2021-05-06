@@ -42,7 +42,7 @@ $(document).ready(function () {
                 if (result) {
                     $.ajax({
                         type: 'POST',
-                        url: 'blah/rentings/returnNow',
+                        url: '/rentings/returnNow',
                         data: JSON.stringify({ 'rentingId': button.attr("data-rentingId") }),
                         contentType: 'application/json; charset=utf-8',
                         success: function (response) {
