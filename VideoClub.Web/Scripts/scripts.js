@@ -35,13 +35,30 @@ $(document).ready(function () {
 $(document).ready(function () {
     $('.btn-return-renting').on('click', function (e) {
         var button = $(e.target);
-        $.ajax({
-            type: 'POST',
-            url: 'rentings/returnNow',
-            data: JSON.stringify({ 'rentingId': button.attr("data-rentingId") }),
-            contentType: 'application/json; charset=utf-8',
-            success: function (response) {
-                window.location.href = response.redirectToUrl;
+        bootbox.confirm({
+            title: "Επιστροφή Κράτησης",
+            message: "Id: #" + button.attr("data-rentingId") + "<br>Τίτλος: " + button.attr("data-rentingMovie") + "<br>Πελάτης: " + button.attr("data-rentingUser"),
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'blah/rentings/returnNow',
+                        data: JSON.stringify({ 'rentingId': button.attr("data-rentingId") }),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (response) {
+                            var status = response.status;
+                            if (status == "OK") {
+                                bootbox.alert("Η επιστροφή ήταν επιτυχής!");
+                                $("#" + button.attr("data-rentingId")).remove();
+                            } else {
+                                bootbox.alert("Η επιστροφή απέτυχε.");
+                            }
+                        },
+                        error: function () {
+                            bootbox.alert("Η επιστροφή απέτυχε :(");
+                        }
+                    })
+                }
             }
         })
     });

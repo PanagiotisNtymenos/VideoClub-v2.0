@@ -141,7 +141,6 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
             return RedirectToAction("index", "rentings");
         }
 
-
         // GET: /rentings/return?returnId
         public async Task<ActionResult> Return(int rentingId)
         {
@@ -200,7 +199,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return Json(new { error = "Wrong Id!" });
+                return Json(new { status = "Error", message = "Wrong rentingId. The given Id or it's type is not valid. (rentingId=" + rentingId + ")." });
             }
             try
             {
@@ -217,7 +216,7 @@ namespace VideoClub.Web.Areas.Rentings.Controllers
                 _logger.Writer.Fatal(e, "Return didn't complete.");
             }
 
-            return Json(new { redirectToUrl = Url.Action("index", "rentings") });
+            return Json(new { status = "OK" });
         }
 
         // GET: /rentings/MoviesAutoComplete

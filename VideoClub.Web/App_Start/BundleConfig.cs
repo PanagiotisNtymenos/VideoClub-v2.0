@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace VideoClub.Web
 {
@@ -20,33 +19,28 @@ namespace VideoClub.Web
                       "~/Scripts/bootstrap.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jquery-ui").Include(
-                      "~/Scripts/jquery.js",
-                      "~/Scripts/jquery-ui.min.js",
                       "~/Scripts/jquery-ui.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/selectize").Include(
                       "~/Scripts/selectize.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/omdb-api").Include(
-                      "~/Scripts/omdb-api.js"));
+            bundles.Add(new ScriptBundle("~/bundles/bootbox").Include(
+                      "~/Scripts/bootbox.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/scripts").Include(
                       "~/Scripts/scripts.js"));
 
             bundles.Add(new StyleBundle("~/Content/jquery-ui").Include(
                       "~/Content/jquery-ui.css",
-                      "~/Content/jquery-ui.min.css",
                       "~/Content/jquery-ui.structure.css",
-                      "~/Content/jquery-ui.structure.min.css",
-                      "~/Content/jquery-ui.theme.css",
-                      "~/Content/jquery-ui.theme.min.css"));
+                      "~/Content/jquery-ui.theme.css"));
 
             bundles.Add(new StyleBundle("~/Content/selectize").Include(
                        "~/Content/selectize.css"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                                   "~/Content/flatly.bootstrap.css",
-                                   "~/Content/site.css"));
+                       "~/Content/flatly.bootstrap.css",
+                       "~/Content/site.css"));
 
         }
     }

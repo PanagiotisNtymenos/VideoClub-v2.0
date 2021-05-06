@@ -60,7 +60,7 @@
                     }
                 </td>
                 <td>
-                    <button type="button" class="btn btn-dark" onclick="location.href='@Url.Action("create", "rentings", new { area="rentings", customer = item.UserName })'">></button>
+                    @Html.ActionLink(">", "create", "rentings", new { area = "rentings", customer = item.UserName }, new { style = "float:right", @class = "btn btn-dark", type = "button" })
                 </td>
             </tr>
         }

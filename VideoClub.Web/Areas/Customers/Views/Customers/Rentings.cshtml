@@ -31,7 +31,7 @@
         @foreach (var item in Model)
         {
 
-            <tr class="table-default">
+            <tr id="@item.Id" class="table-default">
                 <td>
                     <img src=@item.Poster alt="Artwork" style="height:50px;width:auto" />
                 </td>
@@ -79,10 +79,10 @@
                 @if (item.IsActive)
                 {
                     <td>
-                        @Html.ActionLink("<", "return", "rentings", new { area = "rentings", rentingId = item.Id }, new { style = "float:right", @class = "btn btn-warning" })
+                        @Html.ActionLink("<", "return", "rentings", new { area = "rentings", rentingId = item.Id }, new { style = "float:right", @class = "btn btn-warning", type = "button" })
                     </td>
                     <td>
-                        <button id="returnBtn" type="button" class="btn btn-danger btn-return-renting" data-rentingId="@item.Id">x</button>
+                        <button type="button" class="btn btn-danger btn-return-renting" data-rentingId="@item.Id" data-rentingMovie="@item.Copy.Movie.Title" data-rentingUser="@item.User.UserName">x</button>
                     </td>
                 }
             </tr>

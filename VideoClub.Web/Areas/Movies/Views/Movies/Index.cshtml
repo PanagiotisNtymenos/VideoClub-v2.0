@@ -97,25 +97,25 @@
 </table>
 
 <br />
-    Page @(Model.TotalItems < Model.PageNum ? 0 : Model.PageNum) of @Model.TotalPages
-    <div style="padding:10px"></div>
-    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        @if (Model.TotalPages > 1)
-        {
-            <div style="margin-right:1px" class="btn-group" role="group" aria-label="First group">
-                @Html.ActionLink("<", "index", "movies", new { page = (Model.PageNum == 1 ? Model.PageNum : Model.PageNum - 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre }, new { @class = "btn btn-secondary" })
-            </div>
-        }
-        <div style="margin:0" class="btn-group" role="group" aria-label="Second group">
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                @Html.ActionLink(i.ToString(), "index", "movies", new { page = i, q = ViewBag.currentQuery, genre = ViewBag.currentGenre }, new { @class = "btn btn-secondary" })
-            }
+Page @(Model.TotalItems < Model.PageNum ? 0 : Model.PageNum) of @Model.TotalPages
+<div style="padding:10px"></div>
+<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+    @if (Model.TotalPages > 1)
+    {
+        <div style="margin-right:1px" class="btn-group" role="group" aria-label="First group">
+            @Html.ActionLink("<", "index", "movies", new { page = (Model.PageNum == 1 ? Model.PageNum : Model.PageNum - 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre }, new { @class = "btn btn-secondary" })
         </div>
-        @if (Model.TotalPages > 1)
+    }
+    <div style="margin:0" class="btn-group" role="group" aria-label="Second group">
+        @for (int i = 1; i <= Model.TotalPages; i++)
         {
-            <div style="margin-left:1px" class="btn-group" role="group" aria-label="Third group">
-                @Html.ActionLink(">", "index", "movies", new { page = (Model.PageNum == Model.TotalPages ? Model.TotalPages : Model.PageNum + 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre }, new { @class = "btn btn-secondary" })
-            </div>
+            @Html.ActionLink(i.ToString(), "index", "movies", new { page = i, q = ViewBag.currentQuery, genre = ViewBag.currentGenre }, new { @class = "btn btn-secondary" })
         }
     </div>
+    @if (Model.TotalPages > 1)
+    {
+        <div style="margin-left:1px" class="btn-group" role="group" aria-label="Third group">
+            @Html.ActionLink(">", "index", "movies", new { page = (Model.PageNum == Model.TotalPages ? Model.TotalPages : Model.PageNum + 1), q = ViewBag.currentQuery, genre = ViewBag.currentGenre }, new { @class = "btn btn-secondary" })
+        </div>
+    }
+</div>
