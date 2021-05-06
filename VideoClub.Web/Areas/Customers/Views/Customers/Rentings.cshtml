@@ -33,7 +33,14 @@
 
             <tr id="@item.Id" class="table-default">
                 <td>
-                    <img src=@item.Poster alt="Artwork" style="height:50px;width:auto" />
+                    @if (item.Poster != null)
+                    {
+                        <img src=@item.Poster alt="Artwork" style="height:50px;width:auto" />
+                    }
+                    else
+                    {
+                        <img src="~/Content/images/poster_not_available.png" alt="Artwork" style="height:50px;width:auto" />
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(m => item.Copy.Movie.Title)

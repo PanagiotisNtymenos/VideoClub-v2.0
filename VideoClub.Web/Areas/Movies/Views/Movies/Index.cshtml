@@ -39,7 +39,14 @@
                     @Html.DisplayFor(m => item.Id)
                 </td>
                 <td>
-                    <img src=@item.Poster alt="Artwork" style="height:150px;width:auto" />
+                    @if (item.Poster != null)
+                    {
+                        <img src=@item.Poster alt="Artwork" style="height:150px;width:auto" />
+                    }
+                    else
+                    {
+                        <img src="~/Content/images/poster_not_available.png" alt="Artwork" style="height:150px;width:auto" />
+                    }
                 </td>
                 <td>
                     <strong>@Html.DisplayFor(m => item.Title)</strong>
