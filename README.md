@@ -5,4 +5,4 @@ _In case you want to be admin, here are the credentials:
   Password: 123456aA!_
 
 
-[![Logo](VideoClub.Web/Content/icons/movies.png)](https://videoclub3nitas.azurewebsites.net/)
+_Press here! ->_   [![Logo](VideoClub.Web/Content/icons/movies.png)](https://videoclub3nitas.azurewebsites.net/)
